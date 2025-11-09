@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - TooNice</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="signin.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="public/toonice-logo.png" alt="TooNice Logo" class="logo">
+                    <span class="brand-name">TooNice</span>
+                </div>
+                <nav class="nav-desktop">
+                    <a href="index.html" class="nav-link">Home</a>
+                </nav>
+                <div class="auth-buttons">
+                    <a href="signup.html" class="btn btn-primary">Create Account</a>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <nav class="nav-mobile" id="mobileNav">
+                <a href="index.html" class="nav-link-mobile">Home</a>
+                <div class="mobile-auth">
+                    <a href="signup.html" class="btn btn-primary btn-full">Create Account</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Sign In Form Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-content">
+                <div class="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to continue your travel adventures with TooNice</p>
+                </div>
+
+                <form class="auth-form" id="signinForm">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="Enter your email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" required placeholder="Enter your password">
+                            <button type="button" class="password-toggle" id="passwordToggle">Show</button>
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember" class="check-label">Remember me</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full btn-lg">Sign In</button>
+                </form>
+
+                <div class="form-links">
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="signup.html">Create one here</a></p>
+                </div>
+            </div>
+
+            <!-- Decorative Section -->
+            <div class="auth-decoration">
+                <div class="decoration-content">
+                    <h2>Your Travel Companion</h2>
+                    <p>Welcome back to TooNice! Continue exploring amazing destinations with your personalized travel assistant.</p>
+                    <div class="decoration-features">
+                        <div class="deco-item">
+                            <span class="deco-icon">✓</span>
+                            <span>Personalized Recommendations</span>
+                        </div>
+                        <div class="deco-item">
+                            <span class="deco-icon">✓</span>
+                            <span>Access Your Saved Trips</span>
+                        </div>
+                        <div class="deco-item">
+                            <span class="deco-icon">✓</span>
+                            <span>Real-time Travel Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 TooNice. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="signin.js"></script>
+</body>
+</html>
+Écrire à Sabrine Oueslati
