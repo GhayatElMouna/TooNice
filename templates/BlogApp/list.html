@@ -1,0 +1,100 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block title %}Blog Articles{% endblock %}
+
+{% block content %}
+<div class="blog-container container mt-5">
+
+    <!-- Ajouter un article -->
+    <div class="mb-3">
+        <a href="{% url 'article_create_view' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add New Article
+        </a>
+    </div>
+
+    <!-- Titre -->
+    <div class="text-center mb-5">
+        <h1 class="blog-title">Our Blog</h1>
+        <p class="blog-subtitle">Discover the latest articles and insights ✨</p>
+    </div>
+
+    <div class="row">
+        {% for art in articles %}
+        <div class="col-md-4 mb-4">
+            <div class="card blog-card shadow-sm h-100">
+
+                <!-- Image ou vidéo -->
+                {% if art.type_media == "photo" and art.chemin_media %}
+                    <img src="{{ art.chemin_media.url }}" class="card-img-top blog-image" alt="{{ art.titre }}">
+                {% elif art.type_media == "video" and art.chemin_media %}
+                    <video controls class="card-img-top blog-video">
+                        <source src="{{ art.chemin_media.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% else %}
+                    <img src="{% static 'images/default.jpg' %}" class="card-img-top blog-image" alt="Default image">
+                {% endif %}
+
+                <!-- Contenu -->
+                <div class="card-body">
+                    <h5 class="card-title text-primary fw-bold">{{ art.titre }}</h5>
+                    <p class="card-text text-muted">{{ art.description|truncatewords:20 }}</p>
+                </div>
+
+                <!-- Footer: Read/Edit/Delete -->
+                <div class="card-footer d-flex justify-content-around">
+                    <a href="{% url 'article_details_view' art.pk %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-book"></i> Read More
+                    </a>
+                    <a href="{% url 'article_update_view' art.pk %}" class="btn btn-outline-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                    <!-- Bouton modal Delete -->
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ art.pk }}">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+
+                <!-- Like / Dislike -->
+                <div class="mt-2 d-flex justify-content-center gap-2">
+                    <form method="post" action="{% url 'article_like' art.pk %}">
+                        {% csrf_token %}
+                        <button class="btn btn-success btn-sm">👍 {{ art.nb_likes }}</button>
+                    </form>
+                    <form method="post" action="{% url 'article_dislike' art.pk %}">
+                        {% csrf_token %}
+                        <button class="btn btn-danger btn-sm">👎 {{ art.nb_dislikes }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Delete -->
+        <div class="modal fade" id="deleteModal{{ art.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ art.pk }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-danger" id="deleteModalLabel{{ art.pk }}">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete "<strong>{{ art.titre }}</strong>"?
+                    </div>
+                    <div class="modal-footer">
+                        <form method="post" action="{% url 'article_delete_view' art.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Confirm</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% empty %}
+        <p class="text-center">No articles available yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

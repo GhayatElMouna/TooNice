@@ -1,129 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - TooNice</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="signup.css">
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo-section">
-                    <img src="public/toonice-logo.png" alt="TooNice Logo" class="logo">
-                    <span class="brand-name">TooNice</span>
-                </a>
-
-                <nav class="nav-desktop">
-                    <a href="index.html" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Destinations</a>
-                    <a href="#" class="nav-link">Experiences</a>
-                    <a href="#" class="nav-link">About</a>
-                </nav>
-
-                <div class="auth-buttons">
-                    <button class="btn btn-outline">Sign In</button>
-                    <button class="btn btn-primary">Create Account</button>
-                </div>
-
-                <button class="menu-toggle" id="menuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-
-            <nav class="nav-mobile" id="mobileNav">
-                <a href="index.html" class="nav-link-mobile">Home</a>
-                <a href="#" class="nav-link-mobile">Destinations</a>
-                <a href="#" class="nav-link-mobile">Experiences</a>
-                <a href="#" class="nav-link-mobile">About</a>
-                <div class="mobile-auth">
-                    <button class="btn btn-outline btn-full">Sign In</button>
-                    <button class="btn btn-primary btn-full">Create Account</button>
-                </div>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Signup Section -->
-    <section class="signup-section">
-        <div class="signup-container">
-            <div class="signup-card">
-                <div class="signup-header">
-                    <h1>Create Your Account</h1>
-                    <p>Join TooNice and start exploring amazing destinations</p>
-                </div>
-
-                <form class="signup-form" id="signupForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nom">Name *</label>
-                            <input type="text" id="nom" name="nom" required>
+{% extends '../base.html' %}
+{% load static %}
+ 
+{% block title %}Inscription{% endblock %}
+ 
+{% block content %}
+    <div class="text-center my-5">
+        <h1 class="display-5 mb-4 text-primary">
+            <i class="fa fa-user-plus me-2"></i> Créer un Compte
+        </h1>
+        <p class="lead fs-4 text-muted">Choisissez votre rôle et complétez votre profil.</p>
+    </div>
+ 
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <form method="post">
+                        {% csrf_token %}
+ 
+                        {% if form.errors or form.non_field_errors %}
+                            <div class="alert alert-danger mb-4">
+                                <i class="fa fa-exclamation-triangle me-2"></i>
+                                <strong>Erreurs :</strong>
+                                <ul>
+                                    {% for field in form %}
+                                        {% for error in field.errors %}
+                                            <li>{{ field.label }}: {{ error }}</li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+ 
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.first_name.label_tag }}
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.last_name.label_tag }}
+                                {{ form.last_name }}
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="prenom">Last Name *</label>
-                            <input type="text" id="prenom" name="prenom" required>
+ 
+                        <div class="mb-3">
+                            {{ form.email.label_tag }}
+                            {{ form.email }}
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-
-                    
-
-                    <div class="form-group">
-                        <label for="date_naissance">Date of Birth *</label>
-                        <input type="date" id="date_naissance" name="date_naissance" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="pays">Country *</label>
-                        <input type="text" id="pays" name="pays" placeholder="Entrez votre pays" required>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="adresse">Adress *</label>
-                        <input type="text" id="adresse" name="adresse" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password *</label>
-                        <div class="password-input">
-                            <input type="password" id="password" name="password" required>
-                            <button type="button" class="password-toggle" id="passwordToggle">Show</button>
+ 
+                        <div class="mb-3">
+                            {{ form.username.label_tag }}
+                            {{ form.username }}
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirm The Password*</label>
-                        <div class="password-input">
-                            <input type="password" id="confirmPassword" name="confirmPassword" required>
-                            <button type="button" class="password-toggle" id="confirmPasswordToggle">Show</button>
+ 
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.password1.label_tag }}
+                                {{ form.password1 }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.password2.label_tag }}
+                                {{ form.password2 }}
+                            </div>
                         </div>
-                    </div>
-
-
-                    <button type="submit" class="btn btn-primary btn-signup">Create Account</button>
-                </form>
-
-                <div class="signup-footer">
-                    <p>Already have an account? <a href="#">Sign In</a></p>
-                </div>
-
-                <div class="trust-section">
-                    <p>✓ Your data is secure and encrypted</p>
-                    <p>✓ We never share your information</p>
-                    <p>✓ 24/7 customer support available</p>
+ 
+                        <div class="mb-3">
+                            {{ form.role.label_tag }}
+                            {{ form.role }}
+                        </div>
+ 
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.affiliation.label_tag }}
+                                {{ form.affiliation }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.nationality.label_tag }}
+                                {{ form.nationality }}
+                            </div>
+                        </div>
+ 
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-lg px-5 me-3">
+                                <i class="fa fa-user-plus me-2"></i> S'inscrire
+                            </button>
+                            <a href="{% url 'login' %}" class="btn btn-secondary btn-lg px-5">
+                                <i class="fa fa-arrow-left me-2"></i> Annuler
+                            </a>
+                        </div>
+ 
+                        <div class="text-center mt-3">
+                            <p>Déjà un compte ? <a href="{% url 'login' %}" class="text-primary">Se connecter</a></p>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+<<<<<<< Updated upstream:Templates/UserApp/signup.html
     </section>
 
     <!-- Footer -->
@@ -175,3 +151,7 @@
     <script src="signup.js"></script>
 </body>
 </html>
+=======
+    </div>
+{% endblock %}
+>>>>>>> Stashed changes:templates/UserApp/signup.html

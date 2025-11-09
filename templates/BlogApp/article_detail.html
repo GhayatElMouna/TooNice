@@ -1,0 +1,51 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block title %}Article Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+        <div class="text-center mb-4">
+            <h1 class="fw-bold text-primary">{{ article.titre }}</h1>
+            <p class="text-muted">{{ article.type_media|title }} | 📅 Published on {{ article.date_publication|date:"F j, Y" }}</p>
+        </div>
+
+        <!-- ✅ Affichage du média -->
+        <div class="text-center mb-4">
+            {% if article.type_media == "photo" and article.chemin_media %}
+                <img src="{{ article.chemin_media.url }}" 
+                     alt="{{ article.titre }}" 
+                     class="img-fluid rounded-3 shadow-sm" 
+                     style="max-height: 400px; object-fit: cover;">
+            {% elif article.type_media == "video" and article.chemin_media %}
+                <video controls class="rounded-3 shadow-sm" style="width: 100%; max-height: 400px;">
+                    <source src="{{ article.chemin_media.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% else %}
+                <img src="{% static 'images/default.jpg' %}" 
+                     alt="Default image" 
+                     class="img-fluid rounded-3 shadow-sm" 
+                     style="max-height: 400px; object-fit: cover;">
+            {% endif %}
+        </div>
+
+        <!-- ✅ Détails principaux de l’article -->
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item"><strong>Description :</strong> {{ article.description }}</li>
+            <li class="list-group-item"><strong>Author :</strong> {{ article.user.username }}</li>
+            <li class="list-group-item"><strong>Likes :</strong> ❤️ {{ article.nb_likes }}</li>
+            <li class="list-group-item"><strong>Views :</strong> 👁️ {{ article.nb_vues }}</li>
+        </ul>
+
+        <!-- ✅ Bouton retour -->
+        <div class="text-center">
+            <a href="{% url 'article_list_view' %}" 
+               class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+                <i class="bi bi-arrow-left-circle"></i> Back to Articles
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
