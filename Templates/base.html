@@ -21,9 +21,9 @@
 
                 <!-- Desktop Navigation -->
                 <nav class="nav-desktop">
-                    <a href="{% url 'home' %}" class="nav-link">Home</a>
+                    <a href="{% url 'index' %}" class="nav-link">Home</a>
+                    <a href="{% url 'event_list' %}" class="nav-link">Events</a>
                     <a href="#" class="nav-link">Destinations</a>
-                    <a href="{% url 'events' %}" class="nav-link">Events</a>
                     <a href="#" class="nav-link">Experiences</a>
                     <a href="#" class="nav-link">About</a>
                 </nav>
@@ -44,9 +44,9 @@
 
             <!-- Mobile Navigation -->
             <nav class="nav-mobile" id="mobileNav">
-                <a href="{% url 'home' %}" class="nav-link-mobile">Home</a>
+                <a href="{% url 'index' %}" class="nav-link-mobile">Home</a>
                 <a href="#" class="nav-link-mobile">Destinations</a>
-                <a href="{% url 'events' %}" class="nav-link-mobile">Events</a>
+                <a href="{% url 'event_list' %}" class="nav-link-mobile">Events</a>
                 <a href="#" class="nav-link-mobile">Experiences</a>
                 <a href="#" class="nav-link-mobile">About</a>
                 <div class="mobile-auth">
@@ -56,10 +56,9 @@
             </nav>
         </div>
     </header>
-    
 
-
-
+    <!-- Main content -->
+    {% block content %}{% endblock %}
 
     <!-- Footer -->
     <footer class="footer">
@@ -108,5 +107,5 @@
 
     <script src="{% static 'js/script.js' %}"></script>
     {% block extra_js %}{% endblock %}
-    </body>
+</body>
 </html>

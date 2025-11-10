@@ -22,6 +22,9 @@ class Event(models.Model):
     score_avg = models.FloatField(default=0.0)
     ticket_price = models.DecimalField(max_digits=10, decimal_places=2)
 
+    image = models.ImageField(upload_to='event_images/', blank=True, null=True)
+
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

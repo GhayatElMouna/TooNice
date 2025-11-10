@@ -22,8 +22,7 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from EventApp import views
-
-
+   
 
 
 urlpatterns = [
@@ -31,10 +30,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='index.html'), name='index'),
     path('events/', views.event_list, name='event_list'),
-    path('<int:id_event>/', views.event_detail, name='event_detail'),
+    path('events/<int:id_event>/', views.event_detail, name='event_detail'),
 
 
 ]
 # Serve static files during development
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

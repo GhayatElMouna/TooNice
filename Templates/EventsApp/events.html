@@ -13,15 +13,26 @@
         <div class="events-grid">
             {% for event in events %}
             <div class="event-card">
+                {% if event.image %}
+                <div class="event-image">
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                </div>
+                {% endif %}
                 <div class="event-content">
                     <h3 class="event-title">{{ event.title }}</h3>
                     <p class="event-location">
                         <i class="fas fa-map-marker-alt"></i>
                         {{ event.place }}
                     </p>
+                    <p class="event-date">
+                        <i class="fas fa-calendar"></i>
+                        {{ event.date_debut }} - {{ event.date_fin }}
+                    </p>
                     <a href="{% url 'event_detail' event.id_event %}" class="btn-show-more">Show More</a>
                 </div>
             </div>
+            {% empty %}
+            <p>No upcoming events found.</p>
             {% endfor %}
         </div>
     </div>
