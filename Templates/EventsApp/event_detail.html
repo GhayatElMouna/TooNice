@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/event-detail.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<section class="event-detail">
+    <div class="container">
+        <div class="event-header">
+            <h1 class="event-title">{{ event.title }}</h1>
+            <span class="event-category">{{ event.get_category_display }}</span>
+        </div>
+        
+        <div class="event-info">
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ event.place }}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-calendar"></i>
+                <span>From: {{ event.date_debut }}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>To: {{ event.date_fin }}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Price: ${{ event.ticket_price }}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-users"></i>
+                <span>Capacity: {{ event.capacite }} people</span>
+            </div>
+            {% if event.score_avg > 0 %}
+            <div class="info-item">
+                <i class="fas fa-star"></i>
+                <span>Rating: {{ event.score_avg|floatformat:1 }}/5</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="event-description">
+            <h2>About this event</h2>
+            <p>{{ event.description }}</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

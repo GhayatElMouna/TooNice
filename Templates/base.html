@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TooNice - Tourism Assistance</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo-section">
+                    <img src="{% static 'public/toonice-logo.png' %}" alt="TooNice Logo" class="logo">
+                    <span class="brand-name">TooNice</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="nav-desktop">
+                    <a href="{% url 'home' %}" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">Destinations</a>
+                    <a href="{% url 'events' %}" class="nav-link">Events</a>
+                    <a href="#" class="nav-link">Experiences</a>
+                    <a href="#" class="nav-link">About</a>
+                </nav>
+
+                <!-- Auth Buttons -->
+                <div class="auth-buttons">
+                    <button class="btn btn-outline">Sign In</button>
+                    <button class="btn btn-primary">Create Account</button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <nav class="nav-mobile" id="mobileNav">
+                <a href="{% url 'home' %}" class="nav-link-mobile">Home</a>
+                <a href="#" class="nav-link-mobile">Destinations</a>
+                <a href="{% url 'events' %}" class="nav-link-mobile">Events</a>
+                <a href="#" class="nav-link-mobile">Experiences</a>
+                <a href="#" class="nav-link-mobile">About</a>
+                <div class="mobile-auth">
+                    <button class="btn btn-outline btn-full">Sign In</button>
+                    <button class="btn btn-primary btn-full">Create Account</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+
+
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>TooNice</h3>
+                    <p>Your trusted companion for unforgettable travel experiences worldwide.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#">Destinations</a></li>
+                        <li><a href="#">Experiences</a></li>
+                        <li><a href="#">Travel Tips</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 TooNice. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#">Twitter</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+    </body>
+</html>
