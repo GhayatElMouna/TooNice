@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TooNice - Tourism Assistance</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo-section">
+                    <img src="{% static 'public/toonice-logo.png' %}" alt="TooNice Logo" class="logo">
+                    <span class="brand-name">TooNice</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="nav-desktop">
+                    <a href="{% url 'index_auth' %}" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">Destinations</a>
+                    <a href="#" class="nav-link">Experiences</a>
+                    <a href="#" class="nav-link">About</a>
+                </nav>
+
+                <!-- Auth Buttons + NOM UTILISATEUR -->
+                <div class="auth-buttons">
+                    <span class="user-greeting">Bonjour, <strong>{{ user.prenom }}</strong></span>
+                    <a href="{% url 'profile' %}" class="btn btn-outline">My Profile</a>
+                    <form method="post" action="{% url 'logout' %}" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Logout</button>
+</form>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <nav class="nav-mobile" id="mobileNav">
+                <a href="{% url 'index_auth' %}" class="nav-link-mobile">Home</a>
+                <a href="#" class="nav-link-mobile">Destinations</a>
+                <a href="#" class="nav-link-mobile">Experiences</a>
+                <a href="#" class="nav-link-mobile">About</a>
+                <div class="mobile-auth">
+                    <span class="user-greeting-mobile">Bonjour, {{ user.prenom }}</span>
+                    <a href="{% url 'profile' %}" class="btn btn-outline btn-full">My profile</a>
+                    <a href="{% url 'logout' %}" class="btn btn-primary btn-full">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section with Carousel -->
+    <section class="hero">
+        <div class="carousel-container">
+            <div class="carousel-slides" id="carouselSlides">
+                <div class="carousel-slide active" style="background-image: url('{% static 'public/tunisia-sahara-desert-dunes-golden.jpg' %}')">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h1 class="slide-title">Discover Tunisia's Wonders</h1>
+                        <p class="slide-description">Explore ancient ruins, golden deserts, and Mediterranean beaches</p>
+                        <a href="{% url 'profile' %}" class="btn btn-accent">My profile</a>
+                    </div>
+                </div>
+                <div class="carousel-slide" style="background-image: url('{% static 'public/tunisia-mediterranean-beach-crystal-waters.jpg' %}')">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h1 class="slide-title">Coastal Paradise</h1>
+                        <p class="slide-description">Experience pristine beaches and vibrant coastal towns</p>
+                        <button class="btn btn-accent">Explore Now</button>
+                    </div>
+                </div>
+                <div class="carousel-slide" style="background-image: url('{% static 'public/jam.jpg' %}')">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h1 class="slide-title">Rich Heritage & Culture</h1>
+                        <p class="slide-description">Walk through historic monuments</p>
+                        <button class="btn btn-accent">Explore Now</button>
+                    </div>
+                </div>
+                <div class="carousel-slide" style="background-image: url('{% static 'public/kosksi.jpg' %}')">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h1 class="slide-title">Local Food</h1>
+                        <p class="slide-description">Experience the taste of Tunisian Food</p>
+                        <button class="btn btn-accent">Explore Now</button>
+                    </div>
+                </div>
+                <div class="carousel-slide" style="background-image: url('{% static 'public/labsa.jpg' %}')">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h1 class="slide-title">Rich Heritage & Culture</h1>
+                        <p class="slide-description">Walk through historic medinas and discover traditional wearings</p>
+                        <button class="btn btn-accent">Explore Now</button>
+                    </div>
+                </div>
+                <div class="carousel-slide" style="background-image: url('{% static 'public/souk.jpg' %}')">
+                    <div class="slide-overlay"></div>
+                    <div class="slide-content">
+                        <h1 class="slide-title">Authentic Experiences</h1>
+                        <p class="slide-description">Connect with local Tunisian culture and traditions</p>
+                        <button class="btn btn-accent">Explore Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <button class="carousel-btn carousel-btn-prev" id="prevBtn" aria-label="Previous slide">
+                Previous
+            </button>
+            <button class="carousel-btn carousel-btn-next" id="nextBtn" aria-label="Next slide">
+                Next
+            </button>
+
+            <!-- Slide Indicators -->
+            <div class="carousel-indicators" id="indicators">
+                <button class="indicator active" onclick="goToSlide(0)"></button>
+                <button class="indicator" onclick="goToSlide(1)"></button>
+                <button class="indicator" onclick="goToSlide(2)"></button>
+                <button class="indicator" onclick="goToSlide(3)"></button>
+                <button class="indicator" onclick="goToSlide(4)"></button>
+                <button class="indicator" onclick="goToSlide(5)"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose TooNice?</h2>
+                <p>We combine expert knowledge, local insights, and seamless technology to make your travels unforgettable.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-image" style="background-image: url('{% static 'public/tunisia-tour-guide-showing-tourists-landmarks.jpg' %}')"></div>
+                    <div class="feature-content">
+                        <h3>Expert Planning</h3>
+                        <p>Curated itineraries designed by travel experts with years of experience</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-image" style="background-image: url('{% static 'public/tunisia-hospitality-local-host-welcoming.jpg' %}')"></div>
+                    <div class="feature-content">
+                        <h3>24/7 Support</h3>
+                        <p>Always available to assist you before, during, and after your journey</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-image" style="background-image: url('{% static 'public/tunisia-local-guide-medina-traditional-craft.jpg' %}')"></div>
+                    <div class="feature-content">
+                        <h3>Local Connections</h3>
+                        <p>Connect with local guides and authentic experiences in every destination</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Travelers Say</h2>
+                <p>Real experiences from real travelers who've explored the world with TooNice</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="feedback">"TooNice transformed my travel experience! The itinerary was perfectly planned, and the local guide recommendations were spot on. Best trip ever!"</p>
+                    <div class="testimonial-author">
+                        <img src="{% static 'public/portrait-woman-smiling.jpg' %}" alt="Sarah Anderson" class="author-avatar">
+                        <div>
+                            <p class="author-name">Sarah Anderson</p>
+                            <p class="author-location">New York, USA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="feedback">"The 24/7 support team saved my trip when my flight was cancelled. They found me alternatives within hours. Incredible service!"</p>
+                    <div class="testimonial-author">
+                        <img src="{% static 'public/portrait-man-smiling.jpg' %}" alt="Marco Rossi" class="author-avatar">
+                        <div>
+                            <p class="author-name">Marco Rossi</p>
+                            <p class="author-location">Milano, Italy</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="feedback">"Finally found a travel platform that understands authentic experiences. Every destination felt personal and meaningful. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <img src="{% static 'public/portrait-woman-smiling.jpg' %}" alt="Priya Sharma" class="author-avatar">
+                        <div>
+                            <p class="author-name">Priya Sharma</p>
+                            <p class="author-location">New Delhi, India</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="feedback">"From planning to execution, everything was seamless. TooNice's attention to detail is remarkable. Can't wait for my next adventure!"</p>
+                    <div class="testimonial-author">
+                        <img src="{% static 'public/portrait-man-smiling.jpg' %}" alt="James Chen" class="author-avatar">
+                        <div>
+                            <p class="author-name">James Chen</p>
+                            <p class="author-location">Singapore</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="feedback">"As a solo traveler, TooNice gave me confidence and peace of mind. The local connections made me feel welcomed everywhere."</p>
+                    <div class="testimonial-author">
+                        <img src="{% static 'public/portrait-woman-smiling.jpg' %}" alt="Emma Wilson" class="author-avatar">
+                        <div>
+                            <p class="author-name">Emma Wilson</p>
+                            <p class="author-location">London, UK</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="feedback">"The travel recommendations were so accurate! It felt like having a best friend who knows every hidden gem in each city."</p>
+                    <div class="testimonial-author">
+                        <img src="{% static 'public/portrait-man-smiling.jpg' %}" alt="Lucas Costa" class="author-avatar">
+                        <div>
+                            <p class="author-name">Lucas Costa</p>
+                            <p class="author-location">São Paulo, Brazil</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <p class="stat-number">50K+</p>
+                    <p class="stat-label">Happy Travelers</p>
+                </div>
+                <div class="stat-item">
+                    <p class="stat-number">180+</p>
+                    <p class="stat-label">Countries Covered</p>
+                </div>
+                <div class="stat-item">
+                    <p class="stat-number">4.9 stars</p>
+                    <p class="stat-label">Average Rating</p>
+                </div>
+                <div class="stat-item">
+                    <p class="stat-number">24/7</p>
+                    <p class="stat-label">Support Available</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Start Your Adventure?</h2>
+            <p>Join thousands of travelers who've discovered the world with TooNice</p>
+            <div class="cta-buttons">
+                <a href="{% url 'profile' %}" class="btn btn-cta-primary">Mon Profil</a>
+                <a href="#" class="btn btn-cta-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>TooNice</h3>
+                    <p>Your trusted companion for unforgettable travel experiences worldwide.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#">Destinations</a></li>
+                        <li><a href="#">Experiences</a></li>
+                        <li><a href="#">Travel Tips</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 TooNice. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#">Twitter</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
