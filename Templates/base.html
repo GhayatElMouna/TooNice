@@ -30,8 +30,16 @@
 
                 <!-- Auth Buttons -->
                 <div class="auth-buttons">
-                    <button class="btn btn-outline">Sign In</button>
-                    <button class="btn btn-primary">Create Account</button>
+                    {% if user.is_authenticated %}
+                        <span class="me-2">Bonjour, {{ user.username }}</span>
+                        <form action="{% url 'logout' %}" method="post" style="display:inline; margin:0;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline">Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline">Sign In</a>
+                        <a href="{% url 'inscription' %}" class="btn btn-primary">Create Account</a>
+                    {% endif %}
                 </div>
 
                 <!-- Mobile Menu Button -->

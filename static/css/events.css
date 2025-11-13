@@ -45,6 +45,10 @@
     left: 0;
     width: 100%;
     height: 100%;
+    /* ensure the image is centered when object-fit crops it */
+    object-position: center center;
+    /* if an inline max-height was added, prefer filling the container so no gaps appear */
+    max-height: 100% !important;
     object-fit: cover;
     display: block;
 }

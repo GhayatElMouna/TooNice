@@ -15,7 +15,7 @@
             <div class="event-card">
                 {% if event.image %}
                 <div class="event-image">
-                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}"  style="max-height: 400px; object-fit: cover;">
                 </div>
                 {% endif %}
                 <div class="event-content">

@@ -3,53 +3,117 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/event-detail.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-sA+4vT8kI8g4A6N2EoEe7D7svP2v+v1o+0lO1bMM2Jk="
+  crossorigin=""
+/>
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-o9N1j7kP3x0bNUmYbFh3V6M0Tjz7rLJHb7gkZQGa3Dk="
+  crossorigin=""
+></script>
 {% endblock %}
 
 {% block content %}
 <section class="event-detail">
-    <div class="container">
-        <div class="event-header">
-            <h1 class="event-title">{{ event.title }}</h1>
-            <span class="event-category">{{ event.get_category_display }}</span>
-        </div>
-        
-        {% if event.image %}
-        <div class="event-image-detail">
-            <img src="{{ event.image.url }}" alt="{{ event.title }}">
-        </div>
-        {% endif %}
-
-        <div class="event-info">
-            <div class="info-item">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>{{ event.place }}</span>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-calendar"></i>
-                <span>From: {{ event.date_debut }}</span>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-calendar-check"></i>
-                <span>To: {{ event.date_fin }}</span>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-ticket-alt"></i>
-                <span>Price: DT{{ event.ticket_price }}</span>
-            </div>
-            
-            {% if event.score_avg > 0 %}
-            <div class="info-item">
-                <i class="fas fa-star"></i>
-                <span>Rating: {{ event.score_avg|floatformat:1 }}/5</span>
-            </div>
-            {% endif %}
-        </div>
-
-        <div class="event-description">
-            <h2>About this event</h2>
-            <p>{{ event.description }}</p>
-        </div>
+  <div class="container">
+    <!-- Header -->
+    <div class="event-header">
+      <h1 class="event-title">{{ event.title }}</h1>
+      <span class="event-category">{{ event.get_category_display }}</span>
     </div>
+
+    <!-- Image and About side by side -->
+    <div class="event-body">
+      {% if event.image %}
+      <div class="event-image-detail">
+        <img src="{{ event.image.url }}" alt="{{ event.title }}">
+      </div>
+      {% endif %}
+
+      <div class="event-description">
+        <h2>About this event</h2>
+        <p>{{ event.description }}</p>
+      </div>
+    </div>
+
+    <!-- Info Section -->
+    <div class="event-info">
+      <div class="info-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>{{ event.place }}</span>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-calendar"></i>
+        <span>From: {{ event.date_debut }}</span>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-calendar-check"></i>
+        <span>To: {{ event.date_fin }}</span>
+      </div>
+      <div class="info-item">
+        <i class="fas fa-ticket-alt"></i>
+        {% if event.ticket_price == 0 %}
+          <span>Price: Free</span>
+        {% else %}
+          <span>Price: DT{{ event.ticket_price }}</span>
+        {% endif %}
+      </div>
+
+      {% if event.score_avg > 0 %}
+      <div class="info-item">
+        <i class="fas fa-star"></i>
+        <span>Rating: {{ event.score_avg|floatformat:1 }}/5</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Map Section -->
+    <div id="map"></div>
+  </div>
 </section>
+
+<!-- Map Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const place = "{{ event.place|escapejs }}";
+    // Always initialize the map with a sensible default center.
+    const defaultCenter = [33.8076, 10.8451];
+    const map = L.map("map").setView(defaultCenter, 10);
+
+    // Add tile layer and ensure the map renders correctly after being added to the DOM
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    // Fix rendering issues when container size changes or is hidden before init
+    setTimeout(() => map.invalidateSize(), 200);
+
+    // If there's a place, try geocoding it and place a marker. Otherwise leave default view.
+    if (place) {
+      fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          place
+        )}`
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.length > 0) {
+            const { lat, lon } = data[0];
+            map.setView([lat, lon], 13);
+            L.marker([lat, lon]).addTo(map).bindPopup(place).openPopup();
+          } else {
+            console.warn("Map location not found for:", place);
+          }
+        })
+        .catch((err) => console.warn("Map location lookup failed:", err));
+    } else {
+      console.warn("No place provided for this event; showing default map center.");
+    }
+  });
+</script>
 {% endblock %}
