@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - TooNice</title>
+
+    <!-- CHARGEMENT DES FICHIERS STATIQUES -->
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signin.css' %}">
+    <!--   <link rel="stylesheet" href="{% static 'css/stylereservations.css' %}"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap JS Bundle (inclut Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="{% static 'public/toonice-logo.png' %}" alt="TooNice Logo" class="logo">
+                    <span class="brand-name">TooNice</span>
+                </div>
+                <nav class="nav-desktop">
+                    <a href="/" class="nav-link">Home</a>
+                </nav>
+                <div class="auth-buttons">
+                    <a href="/signup/" class="btn btn-primary">Create Account</a>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <nav class="nav-mobile" id="mobileNav">
+                <a href="/" class="nav-link-mobile">Home</a>
+                <div class="mobile-auth">
+                    <a href="/signup/" class="btn btn-primary btn-full">Create Account</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Sign In Form Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-content">
+                <div class="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to continue your travel adventures with TooNice</p>
+                </div>
+
+                <!-- FORMULAIRE DJANGO -->
+<form method="post" class="auth-form" id="signinForm">
+    {% csrf_token %}
+
+    <!-- AFFICHAGE DES ERREURS -->
+    {% if form.errors %}
+        <div style="color: #721c24; background: #f8d7da; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px;">
+            <strong>Connexion échouée :</strong>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p style="margin: 5px 0;">{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <p style="margin: 5px 0;">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- EMAIL -->
+    <div class="form-group">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="form-group">
+        {{ form.password.label_tag }}
+        <div class="password-wrapper">
+            {{ form.password }}
+            <button type="button" class="password-toggle" id="passwordToggle">Show</button>
+        </div>
+    </div>
+
+    <!-- REMEMBER ME -->
+    <div class="form-check">
+        <input type="checkbox" id="remember" name="remember">
+        <label for="remember" class="check-label">Remember me</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-full btn-lg">Sign In</button>
+</form>
+
+                <div class="form-links">
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="/signup/">Create one here</a></p>
+                </div>
+            </div>
+
+            <!-- Decorative Section -->
+            <div class="auth-decoration">
+                <div class="decoration-content">
+                    <h2>Your Travel Companion</h2>
+                    <p>Welcome back to TooNice! Continue exploring amazing destinations with your personalized travel assistant.</p>
+                    <div class="decoration-features">
+                        <div class="deco-item">
+                            <span class="deco-icon">✓</span>
+                            <span>Personalized Recommendations</span>
+                        </div>
+                        <div class="deco-item">
+                            <span class="deco-icon">✓</span>
+                            <span>Access Your Saved Trips</span>
+                        </div>
+                        <div class="deco-item">
+                            <span class="deco-icon">✓</span>
+                            <span>Real-time Travel Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 TooNice. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CHARGEMENT JS -->
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/signin.js' %}"></script>
+</body>
+</html>

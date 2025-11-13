@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="reservation-form-page">
+  <div class="reservation-form-container">
+
+    <div class="reservation-form-card">
+      <h1>
+        {% if object %}
+          ✏️ Modifier la réservation
+        {% else %}
+          🏨 Nouvelle réservation
+        {% endif %}
+      </h1>
+
+      <p class="reservation-form-description">
+        Choisissez un logement, vos dates de séjour et le mode de paiement.<br>
+        Le prix total sera calculé automatiquement en temps réel.
+      </p>
+
+      {% if form.errors %}
+        <div class="reservation-form-errors">
+          ⚠️ Merci de corriger les erreurs signalées dans le formulaire.
+        </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="reservation-form-grid">
+          <!-- Logement -->
+          <div class="form-group">
+            <label for="{{ form.logement.id_for_label }}">
+              <i class="fas fa-hotel"></i> Logement
+            </label>
+            <div class="form-group-icon">
+              🏨
+            </div>
+            {{ form.logement }}
+            {% for error in form.logement.errors %}
+              <span class="field-error">{{ error }}</span>
+            {% endfor %}
+          </div>
+
+          <!-- Mode de paiement -->
+          <div class="form-group">
+            <label for="{{ form.mode_paiement.id_for_label }}">
+              <i class="fas fa-credit-card"></i> Mode de paiement
+            </label>
+            <div class="form-group-icon">
+              💳
+            </div>
+            {{ form.mode_paiement }}
+            {% for error in form.mode_paiement.errors %}
+              <span class="field-error">{{ error }}</span>
+            {% endfor %}
+          </div>
+
+          <!-- Date de début -->
+          <div class="form-group">
+            <label for="{{ form.date_debut.id_for_label }}">
+              <i class="fas fa-calendar-alt"></i> Date d'arrivée
+            </label>
+            <div class="form-group-icon">
+              📅
+            </div>
+            {{ form.date_debut }}
+            {% for error in form.date_debut.errors %}
+              <span class="field-error">{{ error }}</span>
+            {% endfor %}
+          </div>
+
+          <!-- Date de fin -->
+          <div class="form-group">
+            <label for="{{ form.date_fin.id_for_label }}">
+              <i class="fas fa-calendar-check"></i> Date de départ
+            </label>
+            <div class="form-group-icon">
+              🗓️
+            </div>
+            {{ form.date_fin }}
+            {% for error in form.date_fin.errors %}
+              <span class="field-error">{{ error }}</span>
+            {% endfor %}
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group form-group-full">
+            <label for="{{ form.notes.id_for_label }}">
+              <i class="fas fa-sticky-note"></i> Notes (optionnel)
+            </label>
+            {{ form.notes }}
+            {% for error in form.notes.errors %}
+              <span class="field-error">{{ error }}</span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Prix total en temps réel -->
+        <div class="reservation-price-summary">
+          <strong>💰 Prix total estimé</strong>
+          <span id="prix-total-val">
+            {% if object and object.prix_total %}
+              {{ object.prix_total }}
+            {% else %}
+              0.00
+            {% endif %}
+          </span> €
+          <span class="reservation-price-hint">
+            Calculé en fonction du logement et de la durée du séjour
+          </span>
+        </div>
+
+        <div class="reservation-form-actions">
+          <a href="{% url 'reservations:list' %}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Annuler
+          </a>
+          <button type="submit" class="btn btn-primary">
+            {% if object %}
+              <i class="fas fa-save"></i> Enregistrer
+            {% else %}
+              <i class="fas fa-plus"></i> Créer la réservation
+            {% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // mapping id_logement -> prix_par_nuit, fourni par la vue
+  const logementPrices = {{ logement_prices_json|safe }};
+
+  function parseDateInput(value) {
+    if (!value) return null;
+    // value est au format "YYYY-MM-DD"
+    const parts = value.split("-");
+    if (parts.length !== 3) return null;
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // JS: 0-11
+    const day = parseInt(parts[2], 10);
+    return new Date(year, month, day);
+  }
+
+  function differenceInDays(start, end) {
+    if (!start || !end) return 0;
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const diff = (end - start) / msPerDay;
+    // on ne garde pas les valeurs négatives
+    return diff > 0 ? diff : 0;
+  }
+
+  function updatePrice() {
+    const logementSelect = document.getElementById("id_logement");
+    const dateDebutInput = document.getElementById("id_date_debut");
+    const dateFinInput = document.getElementById("id_date_fin");
+    const prixSpan = document.getElementById("prix-total-val");
+
+    if (!logementSelect || !dateDebutInput || !dateFinInput || !prixSpan) {
+      return;
+    }
+
+    const logementId = logementSelect.value;
+    const prixParNuit = logementPrices[logementId] || 0;
+
+    const startDate = parseDateInput(dateDebutInput.value);
+    const endDate = parseDateInput(dateFinInput.value);
+    const nuits = differenceInDays(startDate, endDate);
+
+    const total = nuits * prixParNuit;
+
+    // format simple avec 2 décimales
+    prixSpan.textContent = total.toFixed(2);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const logementSelect = document.getElementById("id_logement");
+    const dateDebutInput = document.getElementById("id_date_debut");
+    const dateFinInput = document.getElementById("id_date_fin");
+
+    if (logementSelect) {
+      logementSelect.addEventListener("change", updatePrice);
+    }
+    if (dateDebutInput) {
+      dateDebutInput.addEventListener("change", updatePrice);
+    }
+    if (dateFinInput) {
+      dateFinInput.addEventListener("change", updatePrice);
+    }
+
+    // calcul initial si on arrive sur un formulaire déjà rempli (édition)
+    updatePrice();
+  });
+</script>
+
+<!-- Ajout des icônes Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

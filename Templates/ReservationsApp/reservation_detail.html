@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="reservation-detail-page">
+  <div class="reservation-detail-container">
+
+    <h1>📋 Détails de la réservation</h1>
+
+    <div class="reservation-detail-card">
+      <p>
+        <strong>🏨 Logement :</strong>
+        {{ reservation.logement }}
+      </p>
+
+      <p>
+        <strong>📅 Dates du séjour :</strong>
+        du {{ reservation.date_debut }} au {{ reservation.date_fin }}
+        {% if reservation.duree_nuits %}
+          ({{ reservation.duree_nuits }} nuits)
+        {% endif %}
+      </p>
+
+      <p class="reservation-row-important">
+        <strong>💰 Prix total :</strong>
+        {{ reservation.prix_total }} €
+      </p>
+
+      <p class="reservation-row-important">
+        <strong>📊 Statut :</strong>
+        <span class="reservation-item-status
+          {% if reservation.statut == 'pending' %}
+            reservation-status-pending
+          {% elif reservation.statut == 'confirmed' %}
+            reservation-status-confirmed
+          {% else %}
+            reservation-status-cancelled
+          {% endif %}
+        ">
+          {{ reservation.get_statut_display }}
+        </span>
+      </p>
+
+      <p>
+        <strong>💳 Mode de paiement :</strong>
+        {{ reservation.mode_paiement|default:"-" }}
+      </p>
+
+      <p>
+        <strong>📝 Notes :</strong>
+        {{ reservation.notes|default:"Aucune note." }}
+      </p>
+
+      <p>
+        <strong>🕒 Créée le :</strong>
+        {{ reservation.date_creation }}
+      </p>
+
+      <div class="reservation-detail-actions">
+        <a href="{% url 'reservations:update' reservation.pk %}" class="btn btn-primary">
+          <i class="fas fa-edit"></i> Modifier
+        </a>
+        <a href="{% url 'reservations:delete' reservation.pk %}" class="btn btn-danger">
+          <i class="fas fa-trash"></i> Supprimer
+        </a>
+        <a href="{% url 'reservations:list' %}" class="btn btn-outline">
+          <i class="fas fa-arrow-left"></i> Retour à la liste
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Ajout des icônes Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

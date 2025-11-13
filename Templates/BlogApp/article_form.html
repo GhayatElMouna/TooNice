@@ -1,0 +1,46 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 600px;">
+    <h2 class="text-center mb-4">
+        {% if object %}
+            Modify {{ object.name }}
+        {% else %}
+            Add an Article
+        {% endif %}
+    </h2>
+
+    <div class="card shadow-sm p-4 mb-5">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                {{ form.titre.label_tag }}
+                {{ form.titre }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.type_media.label_tag }}
+                {{ form.type_media }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.chemin_media.label_tag }}
+                {{ form.chemin_media }}
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success px-4">
+                    {% if object %} Update {% else %} Publish {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

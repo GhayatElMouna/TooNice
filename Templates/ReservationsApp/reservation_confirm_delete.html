@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="reservation-delete-page">
+  <div class="reservation-delete-container">
+    <div class="reservation-delete-card">
+      <!-- Icône d'alerte -->
+      <div class="delete-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+
+      <h1>🗑️ Supprimer la réservation</h1>
+      
+      <div class="delete-content">
+        <p class="delete-warning">
+          ⚠️ Cette action est irréversible. Êtes-vous sûr de vouloir supprimer cette réservation ?
+        </p>
+        
+        <div class="reservation-preview">
+          <div class="preview-header">
+            <i class="fas fa-hotel"></i>
+            <strong>Réservation à supprimer :</strong>
+          </div>
+          <div class="preview-details">
+            <div class="preview-item">
+              <span class="preview-label">🏨 Logement :</span>
+              <span class="preview-value">{{ object.logement }}</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-label">📅 Dates :</span>
+              <span class="preview-value">du {{ object.date_debut }} au {{ object.date_fin }}</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-label">💰 Prix :</span>
+              <span class="preview-value">{{ object.prix_total }} €</span>
+            </div>
+            <div class="preview-item">
+              <span class="preview-label">📊 Statut :</span>
+              <span class="preview-value reservation-status-{{ object.statut }}">
+                {{ object.get_statut_display }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <form method="post" class="delete-actions">
+          {% csrf_token %}
+          <div class="action-buttons">
+            <a href="{% url 'reservations:list' %}" class="btn btn-outline">
+              <i class="fas fa-arrow-left"></i> Annuler
+            </a>
+            <button type="submit" class="btn btn-danger">
+              <i class="fas fa-trash"></i> Confirmer la suppression
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Ajout des icônes Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

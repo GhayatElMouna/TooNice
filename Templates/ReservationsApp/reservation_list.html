@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<section class="reservations-page">
+  <div class="page-container">
+
+    <div class="reservations-list-header">
+      <div>
+        <h1>📋 Mes réservations</h1>
+        <p class="reservation-subtitle">
+          Retrouvez ici toutes vos réservations de logements.
+        </p>
+      </div>
+
+      <a href="{% url 'reservations:create' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Créer une nouvelle réservation
+      </a>
+    </div>
+
+    {% if reservations %}
+      <ul class="reservations-list">
+        {% for r in reservations %}
+          <li>
+            <a href="{% url 'reservations:detail' r.pk %}">
+              <div class="reservation-item-main">
+                <span class="reservation-item-logement">
+                  🏨 {{ r.logement }}
+                </span>
+                <span class="reservation-item-dates">
+                  📅 du {{ r.date_debut }} au {{ r.date_fin }}
+                </span>
+              </div>
+
+              <span class="reservation-item-status
+                {% if r.statut == 'pending' %}
+                  reservation-status-pending
+                {% elif r.statut == 'confirmed' %}
+                  reservation-status-confirmed
+                {% else %}
+                  reservation-status-cancelled
+                {% endif %}
+              ">
+                {{ r.get_statut_display }}
+              </span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="reservations-empty">
+        🏝️ Aucune réservation pour le moment.
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- Ajout des icônes Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
