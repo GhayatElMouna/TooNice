@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ajouter une accommodation - TooNice{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Ajouter une nouvelle accommodation</h1>
+    
+    <form id="accommodation-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Informations générales</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="titre" class="form-label">Titre *</label>
+                        <input type="text" class="form-control" id="titre" name="titre" required
+                               placeholder="Nom de votre hébergement">
+                        <div class="form-text">Lettres, chiffres et espaces uniquement</div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="type" class="form-label">Type d'hébergement *</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="">Sélectionnez un type</option>
+                            <option value="maison_dhote">Maison d'hôte</option>
+                            <option value="gite_rural">Gîte rural</option>
+                            <option value="camping_tente">Camping / Tente</option>
+                            <option value="hotel">Hôtel</option>
+                            <option value="riad">Riad / Dar</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description *</label>
+                    <textarea class="form-control" id="description" name="description" rows="4" required
+                              placeholder="Décrivez votre hébergement..."></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Localisation</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="gouvernorat" class="form-label">Gouvernorat *</label>
+                        <select class="form-select" id="gouvernorat" name="gouvernorat" required>
+                            <option value="">Sélectionnez un gouvernorat</option>
+                            <option value="tunis">Tunis</option>
+                            <option value="ariana">Ariana</option>
+                            <option value="ben_arous">Ben Arous</option>
+                            <option value="manouba">Manouba</option>
+                            <option value="nabeul">Nabeul</option>
+                            <option value="zaghouan">Zaghouan</option>
+                            <option value="bizerte">Bizerte</option>
+                            <option value="beja">Béja</option>
+                            <option value="jendouba">Jendouba</option>
+                            <option value="kef">Le Kef</option>
+                            <option value="siliana">Siliana</option>
+                            <option value="sousse">Sousse</option>
+                            <option value="monastir">Monastir</option>
+                            <option value="mahdia">Mahdia</option>
+                            <option value="sfax">Sfax</option>
+                            <option value="kairouan">Kairouan</option>
+                            <option value="kasserine">Kasserine</option>
+                            <option value="sidi_bouzid">Sidi Bouzid</option>
+                            <option value="gabes">Gabès</option>
+                            <option value="medenine">Medenine</option>
+                            <option value="tataouine">Tataouine</option>
+                            <option value="tozeur">Tozeur</option>
+                            <option value="kebili">Kébili</option>
+                            <option value="gafsa">Gafsa</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="prix" class="form-label">Prix de base (DT) *</label>
+                        <input type="number" class="form-control" id="prix" name="prix" 
+                               step="0.01" min="0" required placeholder="0.00">
+                        <div class="form-text">Prix de base pour l'hébergement</div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="adresse" class="form-label">Adresse complète</label>
+                    <input type="text" class="form-control" id="adresse" name="adresse"
+                           placeholder="Adresse détaillée de l'hébergement">
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Chambres</h5>
+                <button type="button" class="btn btn-sm btn-outline-primary" id="add-room">
+                    <i class="fas fa-plus"></i> Ajouter une chambre
+                </button>
+            </div>
+            <div class="card-body">
+                <div id="rooms-container">
+                    <!-- Les chambres seront ajoutées dynamiquement ici -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Photos</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="photos" class="form-label">Ajouter des photos</label>
+                    <input class="form-control" type="file" id="photos" name="photos" multiple 
+                           accept=".jpg,.jpeg,.png">
+                    <div class="form-text">Formats acceptés: JPG, JPEG, PNG</div>
+                </div>
+                <div id="photos-preview" class="d-flex flex-wrap gap-2 mt-3"></div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'accommodations_list' %}" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">Ajouter l'hébergement</button>
+        </div>
+    </form>
+</div>
+
+<!-- Template pour une nouvelle chambre (caché) -->
+<div id="room-template" class="d-none">
+    <div class="card room-card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Nouvelle chambre</h6>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-room">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Numéro/Nom *</label>
+                    <input type="text" class="form-control room-numero" name="room_numero[]" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Type *</label>
+                    <select class="form-select room-type" name="room_type[]" required>
+                        <option value="">Sélectionnez</option>
+                        <option value="simple">Chambre Simple</option>
+                        <option value="double">Chambre Double</option>
+                        <option value="twin">Chambre Twin</option>
+                        <option value="triple">Chambre Triple</option>
+                        <option value="suite">Suite</option>
+                        <option value="familiale">Chambre Familiale</option>
+                        <option value="dortoir">Dortoir</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Prix/nuit (DT) *</label>
+                    <input type="number" class="form-control room-prix" name="room_prix[]" 
+                           step="0.01" min="0" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nombre de lits *</label>
+                    <input type="number" class="form-control room-lits" name="room_lits[]" 
+                           min="1" value="1" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Capacité (personnes) *</label>
+                    <input type="number" class="form-control room-capacite" name="room_capacite[]" 
+                           min="1" value="1" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control room-description" name="room_description[]" 
+                          rows="2" placeholder="Description de la chambre..."></textarea>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input room-disponible" type="checkbox" 
+                       name="room_disponible[]" checked>
+                <label class="form-check-label">
+                    Chambre disponible
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roomsContainer = document.getElementById('rooms-container');
+    const addRoomBtn = document.getElementById('add-room');
+    const roomTemplate = document.getElementById('room-template').innerHTML;
+    let roomCount = 0;
+    
+    // Ajouter une chambre
+    addRoomBtn.addEventListener('click', function() {
+        roomCount++;
+        const newRoom = roomTemplate
+            .replace(/room-numero/g, `room-numero-${roomCount}`)
+            .replace(/room-type/g, `room-type-${roomCount}`)
+            .replace(/room-prix/g, `room-prix-${roomCount}`)
+            .replace(/room-lits/g, `room-lits-${roomCount}`)
+            .replace(/room-capacite/g, `room-capacite-${roomCount}`)
+            .replace(/room-description/g, `room-description-${roomCount}`)
+            .replace(/room-disponible/g, `room-disponible-${roomCount}`);
+        
+        const roomElement = document.createElement('div');
+        roomElement.innerHTML = newRoom;
+        roomsContainer.appendChild(roomElement);
+        
+        // Ajouter l'événement de suppression
+        const removeBtn = roomElement.querySelector('.remove-room');
+        removeBtn.addEventListener('click', function() {
+            roomElement.remove();
+        });
+    });
+    
+    // Prévisualisation des photos
+    const photosInput = document.getElementById('photos');
+    const photosPreview = document.getElementById('photos-preview');
+    
+    photosInput.addEventListener('change', function() {
+        photosPreview.innerHTML = '';
+        const files = this.files;
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file.type.match('image.*')) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'img-thumbnail';
+                    img.style.width = '150px';
+                    img.style.height = '150px';
+                    img.style.objectFit = 'cover';
+                    photosPreview.appendChild(img);
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        }
+    });
+    
+    // Validation du formulaire
+    const form = document.getElementById('accommodation-form');
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Validation du titre (lettres, chiffres, espaces uniquement)
+        const titre = document.getElementById('titre');
+        const titreRegex = /^[\w\s]+$/;
+        if (!titreRegex.test(titre.value)) {
+            alert('Le titre ne doit contenir que des lettres, chiffres et espaces.');
+            titre.focus();
+            isValid = false;
+        }
+        
+        // Vérifier qu'au moins une chambre est ajoutée
+        const roomCards = document.querySelectorAll('.room-card');
+        if (roomCards.length === 0) {
+            alert('Veuillez ajouter au moins une chambre.');
+            isValid = false;
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+        }
+    });
+    
+    // Ajouter une première chambre automatiquement
+    addRoomBtn.click();
+});
+</script>
+
+<style>
+.room-card {
+    border-left: 4px solid #0d6efd;
+}
+
+.img-thumbnail {
+    margin: 5px;
+}
+</style>
+{% endblock %}

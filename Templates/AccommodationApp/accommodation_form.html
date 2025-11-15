@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if object %}
+        Modifier l'accommodation - TooNice
+    {% else %}
+        Ajouter une accommodation - TooNice
+    {% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/accommodation-forms.css' %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="accommodation-form-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="accommodation-form-card">
+                    <div class="accommodation-form-header">
+                        <h3>
+                            {% if object %}
+                                <i class="fas fa-edit"></i> Modifier l'accommodation
+                            {% else %}
+                                <i class="fas fa-plus"></i> Ajouter une nouvelle accommodation
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="accommodation-form-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle"></i> {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Informations générales -->
+                        <div class="form-section">
+                            <h5 class="form-section-title">
+                                <i class="fas fa-info-circle"></i> Informations générales
+                            </h5>
+                            
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.titre.id_for_label }}" class="form-label required">
+                                    {{ form.titre.label }}
+                                </label>
+                                {{ form.titre }}
+                                {% if form.titre.errors %}
+                                    <div class="text-danger">{{ form.titre.errors }}</div>
+                                {% endif %}
+                                {% if form.titre.help_text %}
+                                    <div class="form-text">{{ form.titre.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.type.id_for_label }}" class="form-label required">
+                                    {{ form.type.label }}
+                                </label>
+                                {{ form.type }}
+                                {% if form.type.errors %}
+                                    <div class="text-danger">{{ form.type.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                {{ form.description.label }}
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        </div>
+                        
+                        <!-- Localisation -->
+                        <div class="form-section">
+                            <h5 class="form-section-title">
+                                <i class="fas fa-map-marker-alt"></i> Localisation
+                            </h5>
+                            
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.gouvernorat.id_for_label }}" class="form-label required">
+                                    {{ form.gouvernorat.label }}
+                                </label>
+                                {{ form.gouvernorat }}
+                                {% if form.gouvernorat.errors %}
+                                    <div class="text-danger">{{ form.gouvernorat.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="{{ form.prix.id_for_label }}" class="form-label required">
+                                    {{ form.prix.label }}
+                                </label>
+                                {{ form.prix }}
+                                {% if form.prix.errors %}
+                                    <div class="text-danger">{{ form.prix.errors }}</div>
+                                {% endif %}
+                                {% if form.prix.help_text %}
+                                    <div class="form-text">{{ form.prix.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.adresse.id_for_label }}" class="form-label">
+                                {{ form.adresse.label }}
+                            </label>
+                            {{ form.adresse }}
+                            {% if form.adresse.errors %}
+                                <div class="text-danger">{{ form.adresse.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-check">
+                                {{ form.est_actif }}
+                                <label class="form-check-label" for="{{ form.est_actif.id_for_label }}">
+                                    {{ form.est_actif.label }}
+                                </label>
+                                {% if form.est_actif.help_text %}
+                                    <div class="form-text">{{ form.est_actif.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            {% if form.est_actif.errors %}
+                                <div class="text-danger">{{ form.est_actif.errors }}</div>
+                            {% endif %}
+                        </div>
+                        </div>
+                        
+                        <!-- Section Chambres -->
+                        <div class="form-section">
+                        <div class="chambres-section">
+                            <div class="chambres-section-header">
+                                <h5><i class="fas fa-bed"></i> Chambres</h5>
+                                <button type="button" class="btn btn-sm" id="add-chambre">
+                                    <i class="fas fa-plus"></i> Ajouter une chambre
+                                </button>
+                            </div>
+                            
+                            {{ chambre_formset.management_form }}
+                            <div id="chambres-container">
+                                {% for chambre_form in chambre_formset %}
+                                    <div class="chambre-form-item">
+                                        {% if chambre_form.DELETE %}
+                                            <div class="form-check">
+                                                {{ chambre_form.DELETE }}
+                                                <label class="form-check-label" for="{{ chambre_form.DELETE.id_for_label }}">
+                                                    <i class="fas fa-trash-alt"></i> Supprimer cette chambre
+                                                </label>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label class="form-label required">Numéro</label>
+                                                {{ chambre_form.numero }}
+                                                {% if chambre_form.numero.errors %}
+                                                    <div class="text-danger">{{ chambre_form.numero.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label required">Type</label>
+                                                {{ chambre_form.type_chambre }}
+                                                {% if chambre_form.type_chambre.errors %}
+                                                    <div class="text-danger">{{ chambre_form.type_chambre.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label required">Nombre de lits</label>
+                                                {{ chambre_form.nombre_lits }}
+                                                {% if chambre_form.nombre_lits.errors %}
+                                                    <div class="text-danger">{{ chambre_form.nombre_lits.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label required">Prix/nuit (DT)</label>
+                                                {{ chambre_form.prix_nuit }}
+                                                {% if chambre_form.prix_nuit.errors %}
+                                                    <div class="text-danger">{{ chambre_form.prix_nuit.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Description</label>
+                                            {{ chambre_form.description }}
+                                            {% if chambre_form.description.errors %}
+                                                <div class="text-danger">{{ chambre_form.description.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        {% for hidden in chambre_form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            {% if chambre_formset.non_form_errors %}
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-circle"></i> {{ chambre_formset.non_form_errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        </div>
+                        
+                        <!-- Section Photos -->
+                        <div class="form-section">
+                        <div class="photos-section">
+                            <div class="photos-section-header">
+                                <h5><i class="fas fa-images"></i> Photos</h5>
+                                <button type="button" class="btn btn-sm" id="add-photo">
+                                    <i class="fas fa-plus"></i> Ajouter une photo
+                                </button>
+                            </div>
+                            
+                            {{ photo_formset.management_form }}
+                            <div id="photos-container">
+                                {% for photo_form in photo_formset %}
+                                    <div class="photo-form-item">
+                                        {% if photo_form.DELETE %}
+                                            <div class="form-check">
+                                                {{ photo_form.DELETE }}
+                                                <label class="form-check-label" for="{{ photo_form.DELETE.id_for_label }}">
+                                                    <i class="fas fa-trash-alt"></i> Supprimer cette photo
+                                                </label>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        <div class="form-group">
+                                            <label class="form-label required">Image</label>
+                                            {{ photo_form.image }}
+                                            {% if photo_form.image.errors %}
+                                                <div class="text-danger">{{ photo_form.image.errors }}</div>
+                                            {% endif %}
+                                            {% if photo_form.instance.image %}
+                                                <div class="mt-3">
+                                                    <img src="{{ photo_form.instance.image.url }}" alt="Photo actuelle" style="max-width: 250px; max-height: 250px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        {% for hidden in photo_form.hidden_fields %}
+                                            {{ hidden }}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            
+                            {% if photo_formset.non_form_errors %}
+                                <div class="alert alert-danger">
+                                    <i class="fas fa-exclamation-circle"></i> {{ photo_formset.non_form_errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <a href="{% url 'accommodation:list_accommodations' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if object %}
+                                    <i class="fas fa-save"></i> Enregistrer les modifications
+                                {% else %}
+                                    <i class="fas fa-plus"></i> Créer l'accommodation
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des chambres
+    const chambresContainer = document.getElementById('chambres-container');
+    const addChambreBtn = document.getElementById('add-chambre');
+    const chambreFormset = document.querySelector('[name="chambres-TOTAL_FORMS"]');
+    
+    if (addChambreBtn && chambreFormset) {
+        let chambreCount = parseInt(chambreFormset.value);
+        
+        addChambreBtn.addEventListener('click', function() {
+            const firstItem = chambresContainer.querySelector('.chambre-form-item');
+            if (!firstItem) return;
+            
+            const template = firstItem.cloneNode(true);
+            // Réinitialiser les valeurs
+            template.querySelectorAll('input, select, textarea').forEach(function(input) {
+                if (input.name) {
+                    input.name = input.name.replace(/-\d+-/, '-' + chambreCount + '-');
+                    input.id = input.id.replace(/-\d+-/, '-' + chambreCount + '-');
+                    if (input.type !== 'checkbox' && input.type !== 'hidden') {
+                        input.value = '';
+                    }
+                    if (input.type === 'checkbox' && input.name.includes('DELETE')) {
+                        input.checked = false;
+                    }
+                }
+            });
+            template.querySelectorAll('label').forEach(function(label) {
+                if (label.getAttribute('for')) {
+                    label.setAttribute('for', label.getAttribute('for').replace(/-\d+-/, '-' + chambreCount + '-'));
+                }
+            });
+            // Réinitialiser l'opacité et activer les champs
+            template.style.opacity = '1';
+            template.querySelectorAll('input, select, textarea').forEach(function(input) {
+                input.disabled = false;
+            });
+            chambresContainer.appendChild(template);
+            chambreFormset.value = ++chambreCount;
+        });
+    }
+    
+    // Gestion des photos
+    const photosContainer = document.getElementById('photos-container');
+    const addPhotoBtn = document.getElementById('add-photo');
+    const photoFormset = document.querySelector('[name="photos-TOTAL_FORMS"]');
+    
+    if (addPhotoBtn && photoFormset) {
+        let photoCount = parseInt(photoFormset.value);
+        
+        addPhotoBtn.addEventListener('click', function() {
+            const firstItem = photosContainer.querySelector('.photo-form-item');
+            if (!firstItem) return;
+            
+            const template = firstItem.cloneNode(true);
+            template.querySelectorAll('input').forEach(function(input) {
+                if (input.name) {
+                    input.name = input.name.replace(/-\d+-/, '-' + photoCount + '-');
+                    input.id = input.id.replace(/-\d+-/, '-' + photoCount + '-');
+                    if (input.type !== 'checkbox' && input.type !== 'hidden') {
+                        input.value = '';
+                    }
+                    if (input.type === 'checkbox' && input.name.includes('DELETE')) {
+                        input.checked = false;
+                    }
+                }
+            });
+            template.querySelectorAll('label').forEach(function(label) {
+                if (label.getAttribute('for')) {
+                    label.setAttribute('for', label.getAttribute('for').replace(/-\d+-/, '-' + photoCount + '-'));
+                }
+            });
+            // Supprimer l'image existante si présente
+            const existingImg = template.querySelector('img');
+            if (existingImg) {
+                existingImg.remove();
+            }
+            // Réinitialiser l'opacité et activer les champs
+            template.style.opacity = '1';
+            template.querySelectorAll('input').forEach(function(input) {
+                input.disabled = false;
+            });
+            photosContainer.appendChild(template);
+            photoFormset.value = ++photoCount;
+        });
+    }
+    
+    // Gestion de la suppression (cacher les formulaires marqués pour suppression)
+    document.querySelectorAll('[name$="-DELETE"]').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const formItem = this.closest('.chambre-form-item, .photo-form-item');
+            if (formItem) {
+                if (this.checked) {
+                    formItem.style.opacity = '0.5';
+                    formItem.querySelectorAll('input, select, textarea').forEach(function(input) {
+                        if (input !== checkbox && input.type !== 'hidden') {
+                            input.disabled = true;
+                        }
+                    });
+                } else {
+                    formItem.style.opacity = '1';
+                    formItem.querySelectorAll('input, select, textarea').forEach(function(input) {
+                        input.disabled = false;
+                    });
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
+

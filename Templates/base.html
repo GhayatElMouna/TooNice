@@ -1,10 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TooNice - Tourism Assistance</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>{% block title %}TooNice - Tourism Assistance{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Header -->
@@ -13,14 +15,14 @@
             <div class="header-content">
                 <!-- Logo -->
                 <div class="logo-section">
-                    <img src="public/toonice-logo.png" alt="TooNice Logo" class="logo">
+                    <img src="{% static 'public/toonice-logo.png' %}" alt="TooNice Logo" class="logo">
                     <span class="brand-name">TooNice</span>
                 </div>
 
                 <!-- Desktop Navigation -->
                 <nav class="nav-desktop">
-                    <a href="{% url 'home' %}" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Destinations</a>
+                    <a href="{% url 'index' %}" class="nav-link">Home</a>
+                    <a href="{% url 'accommodation:list_accommodations' %}" class="nav-link">Hébergements</a>
                     <a href="#" class="nav-link">Experiences</a>
                     <a href="#" class="nav-link">About</a>
                 </nav>
@@ -41,8 +43,8 @@
 
             <!-- Mobile Navigation -->
             <nav class="nav-mobile" id="mobileNav">
-                <a href="index.html" class="nav-link-mobile">Home</a>
-                <a href="#" class="nav-link-mobile">Destinations</a>
+                <a href="{% url 'index' %}" class="nav-link-mobile">Home</a>
+                <a href="{% url 'accommodation:list_accommodations' %}" class="nav-link-mobile">Hébergements</a>
                 <a href="#" class="nav-link-mobile">Experiences</a>
                 <a href="#" class="nav-link-mobile">About</a>
                 <div class="mobile-auth">
@@ -53,9 +55,8 @@
         </div>
     </header>
     
-
-
-
+    <!-- Content -->
+    {% block content %}{% endblock %}
 
     <!-- Footer -->
     <footer class="footer">
@@ -102,6 +103,7 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
     </body>
 </html>

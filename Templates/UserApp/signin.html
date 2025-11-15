@@ -1,42 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - TooNice</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="signin.css">
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-section">
-                    <img src="public/toonice-logo.png" alt="TooNice Logo" class="logo">
-                    <span class="brand-name">TooNice</span>
-                </div>
-                <nav class="nav-desktop">
-                    <a href="index.html" class="nav-link">Home</a>
-                </nav>
-                <div class="auth-buttons">
-                    <a href="signup.html" class="btn btn-primary">Create Account</a>
-                </div>
-                <button class="menu-toggle" id="menuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-            <nav class="nav-mobile" id="mobileNav">
-                <a href="index.html" class="nav-link-mobile">Home</a>
-                <div class="mobile-auth">
-                    <a href="signup.html" class="btn btn-primary btn-full">Create Account</a>
-                </div>
-            </nav>
-        </div>
-    </header>
+{% extends 'base.html' %}
+{% load static %}
 
+{% block title %}Sign In - TooNice{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/signin.css' %}">
+{% endblock %}
+
+{% block content %}
     <!-- Sign In Form Section -->
     <section class="auth-section">
         <div class="auth-container">
@@ -73,7 +44,7 @@
                 </div>
 
                 <div class="auth-footer">
-                    <p>Don't have an account? <a href="signup.html">Create one here</a></p>
+                    <p>Don't have an account? <a href="{% url 'index' %}">Create one here</a></p>
                 </div>
             </div>
 
@@ -100,17 +71,8 @@
             </div>
         </div>
     </section>
+{% endblock %}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2025 TooNice. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="signin.js"></script>
-</body>
-</html>
-Écrire à Sabrine Oueslati
+{% block extra_js %}
+<script src="{% static 'js/signin.js' %}"></script>
+{% endblock %}

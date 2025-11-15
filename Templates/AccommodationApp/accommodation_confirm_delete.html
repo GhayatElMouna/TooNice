@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Supprimer l'accommodation - TooNice{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+.delete-confirmation-container {
+    min-height: calc(100vh - 200px);
+    padding: 40px 0;
+    background: linear-gradient(135deg, #f8faff 0%, #ffffff 50%, #fff5f5 100%);
+}
+
+.delete-card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
+    border: 2px solid #fee2e2;
+    overflow: hidden;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.delete-header {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    padding: 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.delete-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.delete-header h3 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.delete-header i {
+    font-size: 32px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.delete-body {
+    padding: 32px;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
+    border: 2px solid #fbbf24;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    color: #92400e;
+    font-weight: 600;
+}
+
+.alert-warning i {
+    color: #f59e0b;
+    margin-right: 10px;
+}
+
+.delete-message {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.info-card {
+    background: linear-gradient(135deg, rgba(0, 102, 255, 0.03) 0%, rgba(0, 191, 255, 0.02) 100%);
+    border: 2px solid #e0e6ed;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    border-left: 5px solid #0066FF;
+}
+
+.info-card h5 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.info-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 12px;
+}
+
+.info-card strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #00FF88 0%, #00cc70 100%) !important;
+}
+
+.bg-secondary {
+    background: #94a3b8 !important;
+}
+
+.delete-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 2px solid #f1f5f9;
+}
+
+.delete-actions .btn {
+    flex: 1;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.delete-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+.delete-actions .btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.delete-actions .btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.delete-actions .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+@media (max-width: 768px) {
+    .delete-confirmation-container {
+        padding: 24px 0;
+    }
+    
+    .delete-header {
+        padding: 24px;
+    }
+    
+    .delete-header h3 {
+        font-size: 22px;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .delete-body {
+        padding: 24px;
+    }
+    
+    .delete-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .delete-actions .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="delete-confirmation-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="delete-card">
+                    <div class="delete-header">
+                        <h3>
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Confirmation de suppression
+                        </h3>
+                    </div>
+                    <div class="delete-body">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <strong>Attention !</strong> Cette action est irréversible. Toutes les données associées (chambres, photos) seront également supprimées.
+                        </div>
+                        
+                        <p class="delete-message">Êtes-vous sûr de vouloir supprimer l'hébergement suivant ?</p>
+                        
+                        <div class="info-card">
+                            <h5><i class="fas fa-home"></i> {{ object.titre }}</h5>
+                            <p>
+                                <strong><i class="fas fa-tag"></i> Type:</strong> {{ object.get_type_display }}<br>
+                                <strong><i class="fas fa-map-marker-alt"></i> Gouvernorat:</strong> {{ object.get_gouvernorat_display }}<br>
+                                <strong><i class="fas fa-dollar-sign"></i> Prix:</strong> {{ object.prix }} DT<br>
+                                {% if object.adresse %}
+                                    <strong><i class="fas fa-location-dot"></i> Adresse:</strong> {{ object.adresse }}<br>
+                                {% endif %}
+                                <strong><i class="fas fa-info-circle"></i> Statut:</strong> 
+                                {% if object.est_actif %}
+                                    <span class="badge bg-success">Actif</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactif</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="delete-actions">
+                                <a href="{% url 'accommodation:list_accommodations' %}" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Annuler
+                                </a>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Oui, supprimer définitivement
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+

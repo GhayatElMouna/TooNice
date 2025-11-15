@@ -1,0 +1,423 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Accommodations - TooNice{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    .accommodations-list-container {
+        min-height: calc(100vh - 200px);
+        padding: 40px 0;
+        background: linear-gradient(135deg, #f8faff 0%, #ffffff 50%, #f0f9ff 100%);
+    }
+
+    /* HEADER */
+    .page-header {
+        background: linear-gradient(135deg, #0066FF 0%, #00BFFF 100%);
+        padding: 40px 36px;
+        border-radius: 24px;
+        color: white;
+        box-shadow: 0 8px 32px rgba(0, 102, 255, 0.2);
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header .btn-add {
+        background: white;
+        color: #0066FF;
+        font-weight: 700;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .page-header .btn-add:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        background: #f8faff;
+    }
+
+    /* SECTION TITLE */
+    .section-title {
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 32px;
+        background: linear-gradient(135deg, #0066FF 0%, #00BFFF 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        border-left: 5px solid #0066FF;
+        padding-left: 16px;
+    }
+
+    /* ACCOMMODATION CARD */
+    .accommodation-card {
+        border: 2px solid #e0e6ed;
+        border-radius: 20px;
+        background: white;
+        box-shadow: 0 4px 16px rgba(0, 102, 255, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        height: 100%;
+        position: relative;
+    }
+
+    .accommodation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #0066FF 0%, #00BFFF 50%, #00FF88 100%);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .accommodation-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 32px rgba(0, 102, 255, 0.15);
+        border-color: #0066FF;
+    }
+
+    .accommodation-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .accommodation-card .card-body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        height: 100%;
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1a1a2e;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+
+    .card-text {
+        color: #6c757d;
+        font-size: 14px;
+        line-height: 1.6;
+        flex-grow: 1;
+        min-height: 60px;
+    }
+
+    /* BADGES */
+    .badge {
+        font-size: 11px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-right: 6px;
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+
+    .bg-primary { 
+        background: linear-gradient(135deg, #0066FF 0%, #00BFFF 100%) !important;
+        color: white !important;
+    }
+
+    .bg-info { 
+        background: linear-gradient(135deg, #9370DB 0%, #BA55D3 100%) !important;
+        color: white !important;
+    }
+
+    .bg-success { 
+        background: linear-gradient(135deg, #00FF88 0%, #00cc70 100%) !important;
+        color: white !important;
+    }
+
+    .bg-secondary { 
+        background: #94a3b8 !important;
+        color: white !important;
+    }
+
+    /* ACTION BUTTONS */
+    .action-icons {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+        justify-content: flex-end;
+        padding-top: 16px;
+        border-top: 2px solid #f1f5f9;
+    }
+
+    .action-btn {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        border: none;
+        color: white;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-view { 
+        background: linear-gradient(135deg, #00BFFF 0%, #0066FF 100%);
+    }
+
+    .btn-edit { 
+        background: linear-gradient(135deg, #FF8C00 0%, #FF6B00 100%);
+    }
+
+    .btn-delete { 
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    /* PAGINATION */
+    .pagination {
+        margin-top: 48px;
+    }
+
+    .pagination .page-link {
+        color: #0066FF;
+        border: 2px solid #e0e6ed;
+        border-radius: 12px;
+        font-weight: 600;
+        padding: 10px 16px;
+        margin: 0 4px;
+        transition: all 0.3s ease;
+    }
+
+    .pagination .page-link:hover {
+        background: rgba(0, 102, 255, 0.1);
+        border-color: #0066FF;
+        transform: translateY(-2px);
+    }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #0066FF 0%, #00BFFF 100%);
+        border-color: #0066FF;
+        color: white;
+        box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #cbd5e1;
+        border-color: #e2e8f0;
+        cursor: not-allowed;
+    }
+
+    /* Alert */
+    .alert-info {
+        border-radius: 16px;
+        border: 2px solid #00BFFF;
+        background: linear-gradient(135deg, rgba(0, 191, 255, 0.1) 0%, rgba(0, 102, 255, 0.05) 100%);
+        padding: 24px;
+        font-weight: 600;
+    }
+
+    .alert-info .alert-link {
+        color: #0066FF;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    .alert-info .alert-link:hover {
+        color: #00BFFF;
+    }
+
+    /* Card wrapper */
+    .card.border-0.shadow-sm {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 28px 24px;
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+        }
+
+        .section-title {
+            font-size: 22px;
+        }
+
+        .accommodation-card .card-body {
+            padding: 20px;
+        }
+
+        .action-icons {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="accommodations-list-container">
+    <div class="container">
+        <!-- HEADER -->
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <h1><i class="fas fa-home"></i> Nos Hébergements</h1>
+            <a href="{% url 'accommodation:accommodation_create' %}" class="btn-add">
+                <i class="fas fa-plus"></i> Ajouter un hébergement
+            </a>
+        </div>
+
+        <!-- TITLE -->
+        <h2 class="section-title">Découvrez nos logements</h2>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+
+            {% if accommodations %}
+                <div class="row">
+{% for acc in accommodations %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="accommodation-card">
+                                <div class="card-body">
+
+                                    <h5 class="card-title">{{ acc.titre }}</h5>
+
+                                    <p class="card-text">
+                                        {% if acc.description %}
+                                            {{ acc.description|truncatewords:20 }}
+                                        {% else %}
+                                            Aucune description
+                                        {% endif %}
+                                    </p>
+
+                                    <div class="mb-2">
+                                        <span class="badge bg-primary">{{ acc.get_type_display }}</span>
+                                        <span class="badge bg-info">{{ acc.get_gouvernorat_display }}</span>
+
+                                        {% if acc.est_actif %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactif</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div><strong>Prix:</strong> {{ acc.prix }} DT</div>
+
+                                    {% if acc.adresse %}
+                                        <div class="text-muted">
+                                            <i class="fas fa-map-marker-alt"></i> {{ acc.adresse }}
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="text-muted">
+                                        {{ acc.get_nombre_chambres }} chambre(s)
+                                    </div>
+
+                                    <!-- ACTION ICONS VERY CLOSE -->
+                                        <div class="action-icons">
+                                            <a href="{% url 'accommodation:accommodation_detail' acc.pk %}"
+                                               class="action-btn btn-view" title="Voir les détails">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+
+                                            <a href="{% url 'accommodation:accommodation_update' acc.pk %}"
+                                               class="action-btn btn-edit" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            <a href="{% url 'accommodation:accommodation_delete' acc.pk %}"
+                                               class="action-btn btn-delete" title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+
+                                </div>
+                            </div>
+                        </div>
+        {% endfor %}
+    </div>
+
+                <!-- PAGINATION -->
+                {% if is_paginated %}
+                    <nav>
+                        <ul class="pagination justify-content-center mt-4">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page=1">Première</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Précédent</a></li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Suivant</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Dernière</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+
+            {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle" style="font-size: 32px; margin-bottom: 16px; display: block; color: #00BFFF;"></i>
+                    <strong>Aucun hébergement enregistré pour le moment.</strong><br>
+                    <a href="{% url 'accommodation:accommodation_create' %}" class="alert-link">Créer le premier hébergement</a>
+                </div>
+            {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

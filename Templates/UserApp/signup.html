@@ -1,54 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - TooNice</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="signup.css">
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <a href="index.html" class="logo-section">
-                    <img src="public/toonice-logo.png" alt="TooNice Logo" class="logo">
-                    <span class="brand-name">TooNice</span>
-                </a>
+{% extends 'base.html' %}
+{% load static %}
 
-                <nav class="nav-desktop">
-                    <a href="index.html" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Destinations</a>
-                    <a href="#" class="nav-link">Experiences</a>
-                    <a href="#" class="nav-link">About</a>
-                </nav>
+{% block title %}Sign Up - TooNice{% endblock %}
 
-                <div class="auth-buttons">
-                    <button class="btn btn-outline">Sign In</button>
-                    <button class="btn btn-primary">Create Account</button>
-                </div>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
 
-                <button class="menu-toggle" id="menuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-
-            <nav class="nav-mobile" id="mobileNav">
-                <a href="index.html" class="nav-link-mobile">Home</a>
-                <a href="#" class="nav-link-mobile">Destinations</a>
-                <a href="#" class="nav-link-mobile">Experiences</a>
-                <a href="#" class="nav-link-mobile">About</a>
-                <div class="mobile-auth">
-                    <button class="btn btn-outline btn-full">Sign In</button>
-                    <button class="btn btn-primary btn-full">Create Account</button>
-                </div>
-            </nav>
-        </div>
-    </header>
-
+{% block content %}
     <!-- Signup Section -->
     <section class="signup-section">
         <div class="signup-container">
@@ -75,8 +34,6 @@
                         <input type="email" id="email" name="email" required>
                     </div>
 
-                    
-
                     <div class="form-group">
                         <label for="date_naissance">Date of Birth *</label>
                         <input type="date" id="date_naissance" name="date_naissance" required>
@@ -86,7 +43,6 @@
                         <label for="pays">Country *</label>
                         <input type="text" id="pays" name="pays" placeholder="Entrez votre pays" required>
                     </div>
-
 
                     <div class="form-group">
                         <label for="adresse">Adress *</label>
@@ -109,12 +65,11 @@
                         </div>
                     </div>
 
-
                     <button type="submit" class="btn btn-primary btn-signup">Create Account</button>
                 </form>
 
                 <div class="signup-footer">
-                    <p>Already have an account? <a href="#">Sign In</a></p>
+                    <p>Already have an account? <a href="{% url 'index' %}">Sign In</a></p>
                 </div>
 
                 <div class="trust-section">
@@ -125,53 +80,8 @@
             </div>
         </div>
     </section>
+{% endblock %}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h3>TooNice</h3>
-                    <p>Your trusted companion for unforgettable travel experiences worldwide.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Explore</h4>
-                    <ul>
-                        <li><a href="#">Destinations</a></li>
-                        <li><a href="#">Experiences</a></li>
-                        <li><a href="#">Travel Tips</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Careers</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Privacy</a></li>
-                        <li><a href="#">Terms</a></li>
-                        <li><a href="#">Cookies</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2025 TooNice. All rights reserved.</p>
-                <div class="social-links">
-                    <a href="#">Twitter</a>
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
-    <script src="signup.js"></script>
-</body>
-</html>
+{% block extra_js %}
+<script src="{% static 'js/signup.js' %}"></script>
+{% endblock %}
