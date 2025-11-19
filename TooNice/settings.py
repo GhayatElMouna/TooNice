@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'EventApp',
     'UserApp',
+    'ParticipationApp',
 ]
 
 # Use the custom user model defined in UserApp

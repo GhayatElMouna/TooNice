@@ -1,0 +1,73 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/events.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="my-events-section">
+  <div class="container">
+    <h1>My Events</h1>
+
+    {% if events %}
+      <div class="events-grid">
+        {% for event in events %}
+          <div class="event-card">
+
+            {% if event.image %}
+              <div class="event-image">
+                <img src="{{ event.image.url }}" alt="{{ event.title }}" style="max-height:200px; object-fit:cover; width:100%;">
+              </div>
+            {% endif %}
+
+            <div class="event-content">
+              <h3>{{ event.title }}</h3>
+              <p><strong>Location:</strong> {{ event.place }}</p>
+              <p><strong>Date:</strong> 
+                {{ event.date_debut|date:"d M Y" }} 
+                {% if event.date_fin %} - {{ event.date_fin|date:"d M Y" }}{% endif %}
+              </p>
+
+              {% for participation in event.participants.all %}
+                {% if participation.user == request.user %}
+                  <p class="mb-2"><strong>Seats booked:</strong> {{ participation.quantity }}</p>
+
+                  <!-- Update Seats Form -->
+                  <form action="{% url 'participation:update_seats' participation.id %}" method="POST" class="d-inline-block">
+                    {% csrf_token %}
+                    <div class="input-group input-group-sm" style="width: 170px;">
+                      <input type="number" name="quantity" min="1" value="{{ participation.quantity }}" class="form-control" required>
+                      <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                    </div>
+                  </form>
+
+                  <!-- Remove Button -->
+                  <form action="{% url 'participation:delete_participation' participation.id %}" method="POST" class="d-inline-block ms-2">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-danger btn-sm"
+                            onclick="return confirm('Are you sure you want to remove this event from your registrations?')">
+                      Remove
+                    </button>
+                  </form>
+                {% endif %}
+              {% endfor %}
+
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="text-center py-5">
+        <p class="lead text-muted">You have not registered for any events yet.</p>
+
+        <!-- FIXED URL -->
+        <a href="{% url 'event_list' %}" class="btn btn-primary mt-3">Browse Events</a>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

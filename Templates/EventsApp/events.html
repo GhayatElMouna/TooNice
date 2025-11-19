@@ -29,6 +29,14 @@
                         {{ event.date_debut }} - {{ event.date_fin }}
                     </p>
                     <a href="{% url 'event_detail' event.id_event %}" class="btn-show-more">Show More</a>
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'participation:register_event' event.id_event %}" style="display:inline; margin-left:8px;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline">Sign in to register</a>
+                    {% endif %}
                 </div>
             </div>
             {% empty %}

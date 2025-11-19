@@ -6,6 +6,17 @@
     <title>TooNice - Tourism Assistance</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <!-- Flash Messages -->
+    {% if messages %}
+    <div class="container" style="margin-top: 20px;">
+        {% for message in messages %}
+            <div class="alert-message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -32,7 +43,8 @@
                 <div class="auth-buttons">
                     {% if user.is_authenticated %}
                         <span class="me-2">Bonjour, {{ user.username }}</span>
-                        <form action="{% url 'logout' %}" method="post" style="display:inline; margin:0;">
+                        <a href="{% url 'participation:my_events' %}" class="btn btn-outline">My Events</a>
+                        <form action="{% url 'logout' %}" method="post" style="display:inline; margin:0 0 0 8px;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline">Logout</button>
                         </form>
