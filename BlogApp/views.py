@@ -8,6 +8,13 @@ from .models import Article
 from .forms import ArticleForm
 from django.views.generic import TemplateView
 from django.contrib import messages
+from django.shortcuts import get_object_or_404, render
+from UserApp.utils.ia_text_filtrer import contains_inappropriate
+from django.contrib.auth.mixins import UserPassesTestMixin
+
+
+#nbre de views
+
 
 # Like / Dislike
 @login_required
@@ -89,24 +96,64 @@ def blog_index(request):
 
 class ArticleDetailView(DetailView):
     model = Article
+    template_name = "BlogApp/article_detail.html"
+    context_object_name = "article"
+
+    def get(self, request, *args, **kwargs):
+        article = self.get_object()
+
+        # 🔥 Incrémenter les vues si c'est une vidéo
+        if article.type_media == "video":
+            article.nb_vues += 1
+            article.save(update_fields=["nb_vues"])
+
+        return super().get(request, *args, **kwargs)
 
 class ArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
-    # don't expose the user field in the form; attach it from request.user
-    fields = ['titre', 'description', 'type_media', 'chemin_media']
+    form_class = ArticleForm
     success_url = reverse_lazy('article_list_view')
 
     def form_valid(self, form):
-        # set the current authenticated user as the article owner
+        # ⚡ Assigner l'utilisateur **avant toute validation ou accès au profil**
         form.instance.user = self.request.user
-        return super().form_valid(form)
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.instance.user = self.request.user
-        return form
+        # Maintenant on peut accéder au profil
+        profile = self.request.user.userprofile
 
-from django.contrib.auth.mixins import UserPassesTestMixin
+        # Vérifier si l'utilisateur est bloqué
+        if profile.is_blocked():
+            messages.error(
+                self.request,
+                f"🚫 Vous êtes bloqué jusqu'au {profile.blocked_until.strftime('%d/%m/%Y %H:%M')}"
+            )
+            return redirect('article_list_view')
+
+        # Vérification IA
+        if contains_inappropriate(form.instance.description):
+            profile.bad_post_attempts += 1
+            profile.save()
+            if profile.bad_post_attempts >= 2:
+                profile.block_for_two_days()
+                messages.error(
+                    self.request,
+                    "🚫 Vous avez été bloqué pendant 2 jours pour contenu inapproprié."
+                )
+                return redirect('article_list_view')
+            messages.warning(self.request, "⚠ Contenu inapproprié détecté par IA !")
+            return redirect('article_list_view')
+
+        # Publier l'article normalement
+        response = super().form_valid(form)
+
+        # Réinitialiser le compteur si tout va bien
+        profile.bad_post_attempts = 0
+        profile.save()
+
+        return response
+
+
+
 
 
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

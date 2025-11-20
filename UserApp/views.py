@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate, login
 from .forms import RegisterForm as UserRegisterForm
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
-
+from django.utils import timezone
+from datetime import timedelta
 class RegisterView(CreateView):
     model=User
     form_class=UserRegisterForm
@@ -48,3 +49,5 @@ class AdminAwareLoginView(LoginView):
 
         # Fallback to default behavior
         return super().get_success_url()
+
+

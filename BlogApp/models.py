@@ -3,8 +3,6 @@ from django.core.validators import MinLengthValidator, FileExtensionValidator, R
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.conf import settings
-from UserApp.models import User
-  # <-- utiliser AUTH_USER_MODEL
 
 # Validators
 titre_validator = RegexValidator(
@@ -33,7 +31,7 @@ class Article(models.Model):
     type_media = models.CharField(max_length=10, choices=MEDIA_CHOICES)
     chemin_media = models.FileField(upload_to="uploads/", validators=[media_validator])
     date_publication = models.DateTimeField(default=timezone.now)
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -43,23 +41,24 @@ class Article(models.Model):
     nb_vues = models.PositiveIntegerField(default=0)
     nb_infractions = models.PositiveIntegerField(default=0)
     statut = models.CharField(max_length=50, default="en_attente")
-    # Track which users liked or disliked this article so we can toggle properly
     liked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_articles', blank=True)
     disliked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_articles', blank=True)
 
     def __str__(self):
-        return f"{self.titre} ({self.user.username})"
+        user_str = self.user.username if self.user_id else "Utilisateur non assigné"
+        return f"{self.titre} ({user_str})"
 
     def clean(self):
         if len(self.titre.strip()) < 5:
             raise ValidationError("Le titre doit contenir au moins 5 caractères.")
 
-        # Vérifier doublon de titre pour le même utilisateur
-        if Article.objects.filter(
-            titre__iexact=self.titre.strip(),
-            user=self.user
-        ).exclude(pk=self.pk).exists():
-            raise ValidationError("Vous avez déjà un article avec ce titre.")
+        # ⚠ Vérifie que l'utilisateur est assigné avant d’accéder à self.user
+        if self.user_id:  # user_id est None si non assigné
+            if Article.objects.filter(
+                titre__iexact=self.titre.strip(),
+                user=self.user
+            ).exclude(pk=self.pk).exists():
+                raise ValidationError("Vous avez déjà un article avec ce titre.")
 
         # Vérifier cohérence type_media / chemin_media
         if self.type_media == "photo" and not self.chemin_media.name.lower().endswith(('.jpg', '.jpeg', '.png')):

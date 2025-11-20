@@ -35,6 +35,9 @@
             <li class="list-group-item"><strong>Author :</strong> {{ article.user.username }}</li>
             <li class="list-group-item"><strong>Likes :</strong> ❤️ {{ article.nb_likes }}</li>
             <li class="list-group-item"><strong>Dislikes :</strong> 💔 {{ article.nb_dislikes }}</li>
+           {% if article.type_media == "video" %}
+        <li class="list-group-item"><strong>Views :</strong> 👁️ {{ article.nb_vues }}</li>
+    {% endif %}
 
         </ul>
 
