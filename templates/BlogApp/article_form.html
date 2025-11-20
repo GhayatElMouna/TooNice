@@ -4,7 +4,7 @@
 {% block content %}
 <style>
     body {
-        background-color: #f7f4ef; /* 🌼 Beige très clair (blanc cassé) */
+        background-color: #f7f4ef; /* 🌼 Beige très clair */
     }
 
     .article-form-container {
@@ -53,7 +53,11 @@
         outline: none;
     }
 
-    .btn-success {
+    /* Nouveau style pour le bouton Publish/Update */
+    .btn-publish {
+        background-color: #1e40af; /* bleu foncé */
+        color: white;
+        border: 1px solid #1e40af;
         border-radius: 25px;
         padding: 10px 35px;
         font-weight: 600;
@@ -61,8 +65,9 @@
         transition: all 0.3s ease;
     }
 
-    .btn-success:hover {
-        background-color: #218838;
+    .btn-publish:hover {
+        background-color: #3b82f6; /* bleu clair au hover */
+        color: white;
         transform: translateY(-2px);
     }
 
@@ -123,14 +128,14 @@
         </div>
 
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-publish">
                 {% if object %} Update {% else %} Publish {% endif %}
             </button>
         </div>
     </form>
 </div>
+
 <script>
-    // Client-side: adjust file input accept attribute depending on selected media type
     (function(){
         const typeSelect = document.querySelector('select[name="type_media"]');
         const fileInput = document.querySelector('input[name="chemin_media"]');
@@ -149,15 +154,12 @@
 
         if(typeSelect){
             typeSelect.addEventListener('change', syncAccept);
-            // init
             syncAccept();
         }
 
-        // Simple client-side check before submit to show friendly message
         const form = document.querySelector('.article-form-container form');
         if(form){
             form.addEventListener('submit', function(e){
-                // use native validity first
                 if(!form.checkValidity()){
                     e.preventDefault();
                     form.reportValidity();

@@ -74,36 +74,6 @@ body {
   padding: 6px 10px;
 }
 
-.btn-outline-primary {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.btn-outline-primary:hover {
-  background-color: var(--primary);
-  color: white;
-}
-
-.btn-outline-warning {
-  border-color: #f59e0b;
-  color: #f59e0b;
-}
-
-.btn-outline-warning:hover {
-  background-color: #f59e0b;
-  color: white;
-}
-
-.btn-outline-danger {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.btn-outline-danger:hover {
-  background-color: var(--accent);
-  color: white;
-}
-
 .mt-2 button {
   font-size: 12px;
   padding: 4px 8px;
@@ -111,6 +81,19 @@ body {
 
 .modal-header .text-danger {
   color: var(--accent);
+}
+
+/* Seul le bouton Add New Article en bleu avec texte blanc */
+.btn-add-article {
+    background-color: #1e40af; /* bleu */
+    border-color: #1e40af;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-add-article:hover {
+    background-color: #3b82f6; /* bleu clair au hover */
+    color: white;
 }
 
 @media (min-width: 992px) {
@@ -149,7 +132,7 @@ body {
 
     {% if user.is_authenticated %}
     <div class="mb-3 text-end">
-        <a href="{% url 'article_create_view' %}" class="btn btn-success">
+        <a href="{% url 'article_create_view' %}" class="btn btn-add-article">
             <i class="bi bi-plus-circle"></i> Add New Article
         </a>
     </div>
