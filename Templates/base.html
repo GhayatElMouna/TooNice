@@ -1,119 +1,137 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}TooNice - Tourism Assistance{% endblock %}</title>
-    {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-     <!-- Bootstrap JS Bundle (inclut Popper) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
-    {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <!-- Logo -->
-                <div class="logo-section">
-                    <img src="../../../static/public/toonice-logo.png" alt="TooNice Logo" class="logo">
-                    <span class="brand-name">TooNice</span>
-                </div>
-
-                <!-- Desktop Navigation -->
-                <nav class="nav-desktop">
-                    <a href="{% url 'home' %}" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">Destinations</a>
-                    <a href="#" class="nav-link">Experiences</a>
-                    <a href="#" class="nav-link">About</a>
-                </nav>
-
-                <!-- Auth Buttons -->
-                <div class="auth-buttons">
-                    <button class="btn btn-outline">Sign In</button>
-                    <button class="btn btn-primary">Create Account</button>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <button class="menu-toggle" id="menuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+    <header class="header bg-light py-2 shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <!-- Logo -->
+            <div class="logo-section d-flex align-items-center">
+                <img src="{% static 'public/toonice-logo.png' %}" alt="TooNice Logo" class="logo me-2" style="height:40px;">
+                <span class="brand-name fw-bold fs-4">TooNice</span>
             </div>
 
-            <!-- Mobile Navigation -->
-            <nav class="nav-mobile" id="mobileNav">
-                <a href="index.html" class="nav-link-mobile">Home</a>
-                <a href="#" class="nav-link-mobile">Destinations</a>
-                <a href="#" class="nav-link-mobile">Experiences</a>
-                <a href="#" class="nav-link-mobile">About</a>
-                <div class="mobile-auth">
-                     <a href="{% url 'login' %}" class="btn btn-outline btn-full">Sign In</a>
-                     <a href="{% url 'inscription' %}" class="btn btn-primary btn-full">Create Account</a>
+            <!-- Desktop Navigation -->
+            <nav class="nav-desktop d-none d-md-flex align-items-center gap-3">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Destinations</a>
+                <a href="#" class="nav-link">Experiences</a>
+                <a href="#" class="nav-link">About</a>
 
+                {% if user.is_authenticated %}
+                <!-- Dropdown Articles -->
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="articlesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Articles
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="articlesDropdown">
+                        <li><a class="dropdown-item" href="{% url 'article_my_list' %}">My Articles</a></li>
+                        <li><a class="dropdown-item" href="{% url 'article_list_view' %}">All Articles</a></li>
+                    </ul>
                 </div>
+                {% endif %}
             </nav>
+
+            <!-- Auth Buttons / Welcome -->
+            <div class="auth-buttons d-flex align-items-center gap-2">
+                {% if user.is_authenticated %}
+                    <span class="fw-semibold">Welcome, {{ user.username }}</span>
+                    <form action="{% url 'logout' %}" method="post" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm">Sign In</a>
+                    <a href="{% url 'inscription' %}" class="btn btn-primary btn-sm">Create Account</a>
+                {% endif %}
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="d-md-none btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-expanded="false">
+                ☰
+            </button>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div class="collapse bg-light" id="mobileNav">
+            <div class="p-3 d-flex flex-column gap-2">
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Destinations</a>
+                <a href="#" class="nav-link">Experiences</a>
+                <a href="#" class="nav-link">About</a>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'article_my_list' %}" class="btn btn-primary w-100">My Articles</a>
+                    <a href="{% url 'article_list_view' %}" class="btn btn-secondary w-100">All Articles</a>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-secondary w-100 mt-2">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary w-100">Sign In</a>
+                    <a href="{% url 'inscription' %}" class="btn btn-primary w-100">Create Account</a>
+                {% endif %}
+            </div>
         </div>
     </header>
-    
-    {% block content %}
-    {% endblock %}
-    
+
+    <!-- Main content -->
+    <main class="py-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer bg-dark text-light py-4 mt-auto">
         <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <h3>TooNice</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>TooNice</h5>
                     <p>Your trusted companion for unforgettable travel experiences worldwide.</p>
                 </div>
-                <div class="footer-col">
-                    <h4>Explore</h4>
-                    <ul>
-                        <li><a href="#">Destinations</a></li>
-                        <li><a href="#">Experiences</a></li>
-                        <li><a href="#">Travel Tips</a></li>
+                <div class="col-md-3">
+                    <h6>Explore</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">Destinations</a></li>
+                        <li><a href="#" class="text-light">Experiences</a></li>
+                        <li><a href="#" class="text-light">Travel Tips</a></li>
                     </ul>
                 </div>
-                <div class="footer-col">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Contact</a></li>
-                        <li><a href="#">Careers</a></li>
+                <div class="col-md-3">
+                    <h6>Company</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">About Us</a></li>
+                        <li><a href="#" class="text-light">Contact</a></li>
+                        <li><a href="#" class="text-light">Careers</a></li>
                     </ul>
                 </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Privacy</a></li>
-                        <li><a href="#">Terms</a></li>
-                        <li><a href="#">Cookies</a></li>
+                <div class="col-md-3">
+                    <h6>Legal</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">Privacy</a></li>
+                        <li><a href="#" class="text-light">Terms</a></li>
+                        <li><a href="#" class="text-light">Cookies</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="footer-bottom">
-                <p>&copy; 2025 TooNice. All rights reserved.</p>
-                <div class="social-links">
-                    <a href="#">Twitter</a>
-                    <a href="#">Instagram</a>
-                    <a href="#">Facebook</a>
-                </div>
+            <div class="text-center mt-3">
+                <small>&copy; 2025 TooNice. All rights reserved.</small>
             </div>
         </div>
     </footer>
 
-    {% block scripts %}
+    <!-- Bootstrap JS bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/script.js' %}"></script>
-    {% endblock %}
-    </body>
+</body>
 </html>

@@ -2,7 +2,9 @@ from django.db import models
 from django.core.validators import MinLengthValidator, FileExtensionValidator, RegexValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from django.conf import settings  # <-- utiliser AUTH_USER_MODEL
+from django.conf import settings
+from UserApp.models import User
+  # <-- utiliser AUTH_USER_MODEL
 
 # Validators
 titre_validator = RegexValidator(
@@ -31,7 +33,7 @@ class Article(models.Model):
     type_media = models.CharField(max_length=10, choices=MEDIA_CHOICES)
     chemin_media = models.FileField(upload_to="uploads/", validators=[media_validator])
     date_publication = models.DateTimeField(default=timezone.now)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -41,6 +43,9 @@ class Article(models.Model):
     nb_vues = models.PositiveIntegerField(default=0)
     nb_infractions = models.PositiveIntegerField(default=0)
     statut = models.CharField(max_length=50, default="en_attente")
+    # Track which users liked or disliked this article so we can toggle properly
+    liked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_articles', blank=True)
+    disliked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_articles', blank=True)
 
     def __str__(self):
         return f"{self.titre} ({self.user.username})"

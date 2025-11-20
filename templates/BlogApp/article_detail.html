@@ -11,7 +11,6 @@
             <p class="text-muted">{{ article.type_media|title }} | 📅 Published on {{ article.date_publication|date:"F j, Y" }}</p>
         </div>
 
-        <!-- ✅ Affichage du média -->
         <div class="text-center mb-4">
             {% if article.type_media == "photo" and article.chemin_media %}
                 <img src="{{ article.chemin_media.url }}" 
@@ -31,12 +30,12 @@
             {% endif %}
         </div>
 
-        <!-- ✅ Détails principaux de l’article -->
         <ul class="list-group list-group-flush mb-4">
             <li class="list-group-item"><strong>Description :</strong> {{ article.description }}</li>
             <li class="list-group-item"><strong>Author :</strong> {{ article.user.username }}</li>
             <li class="list-group-item"><strong>Likes :</strong> ❤️ {{ article.nb_likes }}</li>
-            <li class="list-group-item"><strong>Views :</strong> 👁️ {{ article.nb_vues }}</li>
+            <li class="list-group-item"><strong>Dislikes :</strong> 💔 {{ article.nb_dislikes }}</li>
+
         </ul>
 
         <!-- ✅ Bouton retour -->

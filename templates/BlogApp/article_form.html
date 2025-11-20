@@ -2,45 +2,179 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-5" style="max-width: 600px;">
-    <h2 class="text-center mb-4">
+<style>
+    body {
+        background-color: #f7f4ef; /* 🌼 Beige très clair (blanc cassé) */
+    }
+
+    .article-form-container {
+        max-width: 600px;
+        margin: 60px auto;
+        background: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 40px;
+        transition: 0.3s ease;
+    }
+
+    .article-form-container:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .article-form-container h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #444;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+        border-radius: 10px !important;
+        border: 1px solid #ddd;
+        padding: 10px 12px;
+        width: 100%;
+        transition: all 0.3s ease;
+        background-color: #fafafa;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.25);
+        background-color: #fff;
+        outline: none;
+    }
+
+    .btn-success {
+        border-radius: 25px;
+        padding: 10px 35px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        transform: translateY(-2px);
+    }
+
+    .mb-3 {
+        margin-bottom: 20px;
+    }
+
+    textarea {
+        resize: none;
+        min-height: 100px;
+    }
+</style>
+
+<div class="article-form-container">
+    <h2>
         {% if object %}
-            Modify {{ object.name }}
+            ✏️ Modify {{ object.titre }}
         {% else %}
-            Add an Article
+            📝 Add a New Article
         {% endif %}
     </h2>
 
-    <div class="card shadow-sm p-4 mb-5">
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
 
-            <div class="mb-3">
-                {{ form.titre.label_tag }}
-                {{ form.titre }}
-            </div>
+        {# Show non-field errors #}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
 
-            <div class="mb-3">
-                {{ form.description.label_tag }}
-                {{ form.description }}
-            </div>
+        <div class="mb-3">
+            <label class="form-label">{{ form.titre.label }}</label>
+            {{ form.titre.errors }}
+            {{ form.titre }}
+        </div>
 
-            <div class="mb-3">
-                {{ form.type_media.label_tag }}
-                {{ form.type_media }}
-            </div>
+        <div class="mb-3">
+            <label class="form-label">{{ form.description.label }}</label>
+            {{ form.description.errors }}
+            {{ form.description }}
+        </div>
 
-            <div class="mb-3">
-                {{ form.chemin_media.label_tag }}
-                {{ form.chemin_media }}
-            </div>
+        <div class="mb-3">
+            <label class="form-label">{{ form.type_media.label }}</label>
+            {{ form.type_media.errors }}
+            {{ form.type_media }}
+        </div>
 
-            <div class="text-center mt-4">
-                <button type="submit" class="btn btn-success px-4">
-                    {% if object %} Update {% else %} Publish {% endif %}
-                </button>
-            </div>
-        </form>
-    </div>
+        <div class="mb-3">
+            <label class="form-label">{{ form.chemin_media.label }}</label>
+            {{ form.chemin_media.errors }}
+            {{ form.chemin_media }}
+            {% if object and object.chemin_media %}
+            <p class="small mt-2">Fichier actuel: <a href="{{ object.chemin_media.url }}">voir</a></p>
+            {% endif %}
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-success">
+                {% if object %} Update {% else %} Publish {% endif %}
+            </button>
+        </div>
+    </form>
 </div>
+<script>
+    // Client-side: adjust file input accept attribute depending on selected media type
+    (function(){
+        const typeSelect = document.querySelector('select[name="type_media"]');
+        const fileInput = document.querySelector('input[name="chemin_media"]');
+
+        function syncAccept(){
+            if(!typeSelect || !fileInput) return;
+            const val = typeSelect.value;
+            if(val === 'photo'){
+                fileInput.setAttribute('accept', 'image/*');
+            } else if(val === 'video'){
+                fileInput.setAttribute('accept', 'video/*');
+            } else {
+                fileInput.setAttribute('accept', 'image/*,video/*');
+            }
+        }
+
+        if(typeSelect){
+            typeSelect.addEventListener('change', syncAccept);
+            // init
+            syncAccept();
+        }
+
+        // Simple client-side check before submit to show friendly message
+        const form = document.querySelector('.article-form-container form');
+        if(form){
+            form.addEventListener('submit', function(e){
+                // use native validity first
+                if(!form.checkValidity()){
+                    e.preventDefault();
+                    form.reportValidity();
+                    return;
+                }
+
+                const f = fileInput && fileInput.files && fileInput.files[0];
+                if(f){
+                    const max = 10 * 1024 * 1024; // 10MB
+                    if(f.size > max){
+                        e.preventDefault();
+                        alert('Le fichier est trop volumineux (max 10 MB).');
+                        return;
+                    }
+                }
+            });
+        }
+    })();
+</script>
 {% endblock %}

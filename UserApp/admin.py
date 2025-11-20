@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import *
 
 class UserAdmin(admin.ModelAdmin):
-    list_display=("user_id","username","first_name","last_name","email","role")
+    list_display=("user_id","username","first_name","last_name","email")
     search_fields=("user_id","username","email")
 # Register your models here.
 admin.site.register(User,UserAdmin)

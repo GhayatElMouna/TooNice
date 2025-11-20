@@ -6,17 +6,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
-
 import uuid
-
 import random
 import string
-
-
-
-
-
-
 
 def validateEmail(value):
     allowed_domains = ['esprit.tn','univ.tn','mit.edu','ox.ac.uk']
@@ -30,11 +22,6 @@ def generate_user_id():
     # Génère un identifiant unique du type userXXXXXX (6 caractères alphanumériques)
     return "user" + uuid.uuid4().hex[:4].upper()
 
-
-
-
-
-
 name_validator= RegexValidator(
     regex=r'^[a-zA-Z\s]+$',
     message="This field should contain only alphabetic characters."
@@ -43,37 +30,27 @@ name_validator= RegexValidator(
 
 # Create your models here.
 class User(AbstractUser):
-
-    ROLE_CHOICES = [
-        ('participant', 'Participant'),
-        ('organisateur', 'Organisateur'),
-        ('membre', 'Membre du comité scientifique'),
-    ]
-
-
     user_id = models.CharField(max_length=8, primary_key=True, unique=True, editable=False)    
     first_name=models.CharField(max_length=30,validators=[name_validator])
     last_name=models.CharField(max_length=30,validators=[name_validator])
     email=models.EmailField(unique=True, validators=[validateEmail])
-    role=models.CharField(max_length=20, choices=ROLE_CHOICES)
-    affiliation=models.CharField(max_length=100, blank=True, null=True)
-    nationality=models.CharField(max_length=50, blank=True, null=True)
+    
     # created_at=models.DateTimeField(auto_now_add=True)
     # updated_at=models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.username} ({self.role})"
-    
     def save(self, *args, **kwargs):
-        if not self.user_id:  
+        if not self.user_id:
             new_id = generate_user_id()
-            
+
             while User.objects.filter(user_id=new_id).exists():
                 new_id = generate_user_id()
             self.user_id = new_id
         super().save(*args, **kwargs)
 
-    
+    def __str__(self):
+        return self.username
+
+
 
 
 

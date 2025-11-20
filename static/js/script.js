@@ -55,5 +55,26 @@ mobileLinks.forEach((link) => {
   })
 })
 
+// Fallback: ensure Sign In / Sign Up buttons navigate (handles any JS that might prevent default)
+document.addEventListener('DOMContentLoaded', function () {
+  const signin = document.querySelectorAll('.btn-signin')
+  const signup = document.querySelectorAll('.btn-signup')
+
+  signin.forEach(el => el.addEventListener('click', function (e) {
+    const href = el.getAttribute('href')
+    if (href) {
+      // allow normal navigation, but force if prevented
+      setTimeout(() => { if (location.href.endsWith(window.location.pathname)) location.href = href }, 50)
+    }
+  }))
+
+  signup.forEach(el => el.addEventListener('click', function (e) {
+    const href = el.getAttribute('href')
+    if (href) {
+      setTimeout(() => { if (location.href.endsWith(window.location.pathname)) location.href = href }, 50)
+    }
+  }))
+})
+
 // Initialize carousel
 goToSlide(0)

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In - TooNice{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 420px;">
+    <h2 class="mb-3 text-center">Sign In</h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="mb-3">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="text-danger">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.password.label_tag }}
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="text-danger">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary w-100">Sign In</button>
+
+        <div class="text-center mt-3">
+            <p>Don't have an account? <a href="{% url 'inscription' %}">Create Account</a></p>
+        </div>
+    </form>
+</div>
+{% endblock %}

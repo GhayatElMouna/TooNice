@@ -37,12 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< Updated upstream:TooNice/settings.py
-=======
     'BlogApp',
     'UserApp',
 
->>>>>>> Stashed changes:ProjetSE/settings.py
 ]
 
 MIDDLEWARE = [
@@ -60,11 +57,7 @@ ROOT_URLCONF = 'TooNice.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-<<<<<<< Updated upstream:TooNice/settings.py
-    'DIRS': [BASE_DIR / 'Templates'],
-=======
-        'DIRS': [BASE_DIR/'Templates'],
->>>>>>> Stashed changes:ProjetSE/settings.py
+        'DIRS': [BASE_DIR / 'Templates', BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,28 +120,19 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(_file_)))
 
-<<<<<<< Updated upstream:TooNice/settings.py
-=======
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-STATIC_URL = 'static/'
-#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
->>>>>>> Stashed changes:ProjetSE/settings.py
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static", ]
+    BASE_DIR / 'static',
+]
 # De]fault primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-<<<<<<< Updated upstream:TooNice/settings.py
-=======
 
 AUTH_USER_MODEL='UserApp.User'
 LOGIN_REDIRECT_URL='home'
-LOGOUT_REDIRECT_URL='home'
+LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL='login'
->>>>>>> Stashed changes:ProjetSE/settings.py
