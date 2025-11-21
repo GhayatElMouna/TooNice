@@ -11,4 +11,5 @@ urlpatterns = [
     path('home/', IndexAuthView.as_view(), name='index_auth'),  # Page connectée
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('profile/update/', UpdateProfileView.as_view(), name='update_profile'),
+    path('about/', AboutView.as_view(), name='about'),  # ← Nouvelle URL pour la page About
 ]

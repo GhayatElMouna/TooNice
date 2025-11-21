@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About TooNice - Transforming Travel</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+                        <img src="{% static 'public/toonice-logo.png' %}" alt="TooNice Logo" class="logo">
+                        <span class="brand-name">TooNice</span>
+                    </a>
+                </div>
+                <nav class="nav-desktop">
+                    <a href="" class="nav-link">Home</a>
+                    <a href="about.html" class="nav-link active">About</a>
+                    <a href="#" class="nav-link">Destinations</a>
+                    <a href="#" class="nav-link">Contact</a>
+                </nav>
+                <div class="auth-buttons">
+                    <a href="/signin/" class="btn btn-outline">Sign In</a>
+                    <a href="/signup/" class="btn btn-primary">Create Account</a>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modern Hero Section -->
+    <section class="hero-modern">
+        <div class="container">
+            <div class="hero-content-modern">
+                <span class="hero-badge-new">Our Story</span>
+                <h1 class="hero-title">Transforming<br><span class="accent-text">Travel</span> into<br>Unforgettable Journeys</h1>
+                <p class="hero-subtitle">Discover how we're revolutionizing the way people explore the world, one authentic experience at a time.</p>
+                <div class="hero-cta-group">
+                    <a href="#journey" class="btn btn-cta-modern">Explore Our Journey</a>
+                    <a href="#values" class="btn btn-cta-outline-modern">Learn Our Values</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-image-wrapper">
+                    <img src="{% static 'public/paysage.jpg' %}" alt="Adventure">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who We Are - Modern Grid -->
+    <section class="who-we-are-modern">
+        <div class="container">
+            <div class="section-intro">
+                <span class="section-label">Our Identity</span>
+                <h2>Who We Are</h2>
+            </div>
+            <div class="who-grid-modern">
+                <div class="who-card who-card-1">
+                    <div class="who-card-number">01</div>
+                    <h3>Founded on Passion</h3>
+                    <p>We started with a simple belief: travel transforms lives. What began as a vision in Tunisia has grown into a global movement.</p>
+                    <img src="{% static 'public/jam.jpg' %}" alt="Beach">
+                </div>
+                <div class="who-card who-card-2">
+                    <div class="who-card-number">02</div>
+                    <h3>Driven by Purpose</h3>
+                    <p>Every decision we make is guided by our commitment to authentic experiences, community impact, and sustainable travel.</p>
+                    <img src="{% static 'public/souk.jpg' %}" alt="Desert">
+                </div>
+                <div class="who-card who-card-3">
+                    <div class="who-card-number">03</div>
+                    <h3>Growing Globally</h3>
+                    <p>From local roots to international reach, we now serve travelers across 50+ countries with 500+ trusted local guides.</p>
+                    <img src="{% static 'public/sahra.jpg' %}" alt="Culture">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values - Modern Presentation -->
+    <section class="values-modern" id="values">
+        <div class="container">
+            <div class="section-intro">
+                <span class="section-label">What We Stand For</span>
+                <h2>Our Core Values</h2>
+                <p class="section-desc">The principles that guide every decision and every journey we facilitate.</p>
+            </div>
+            
+            <div class="values-layout">
+                <div class="values-left">
+                    <div class="value-item-modern value-1">
+                        <div class="value-icon">🌍</div>
+                        <h3>Authenticity</h3>
+                        <p>Real connections over commodified experiences. We celebrate genuine culture and honest storytelling.</p>
+                    </div>
+                    <div class="value-item-modern value-2">
+                        <div class="value-icon">🤝</div>
+                        <h3>Community</h3>
+                        <p>Every traveler becomes a community partner. We create bridges between cultures with mutual respect and impact.</p>
+                    </div>
+                </div>
+                <div class="values-center">
+                    <div class="values-visual">
+                        <div class="values-circle"></div>
+                    </div>
+                </div>
+                <div class="values-right">
+                    <div class="value-item-modern value-3">
+                        <div class="value-icon">⚡</div>
+                        <h3>Innovation</h3>
+                        <p>Cutting-edge technology serves human experiences. We blend modern solutions with time-honored wisdom.</p>
+                    </div>
+                    <div class="value-item-modern value-4">
+                        <div class="value-icon">✨</div>
+                        <h3>Excellence</h3>
+                        <p>We obsess over every detail. From inspiration to memory, we ensure your journey exceeds expectations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Journey - Modern Timeline -->
+    <section class="journey-modern" id="journey">
+        <div class="container">
+            <div class="section-intro">
+                <span class="section-label">Our Evolution</span>
+                <h2>Our Journey</h2>
+                <p class="section-desc">From vision to transforming the global travel industry.</p>
+            </div>
+
+            <div class="journey-timeline-modern">
+                <div class="journey-item-modern">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content-modern">
+                        <span class="journey-year">2018</span>
+                        <h3>The Dream Begins</h3>
+                        <p>Launched with bold vision to revolutionize travel through authentic expertise and technology.</p>
+                        <span class="journey-badge">🚀 First Office in Tunis</span>
+                    </div>
+                </div>
+
+                <div class="journey-item-modern">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content-modern">
+                        <span class="journey-year">2019</span>
+                        <h3>Rapid Expansion</h3>
+                        <p>Scaled across North Africa with 500+ local guides and community ambassadors.</p>
+                        <span class="journey-badge">🤝 500+ Partners</span>
+                    </div>
+                </div>
+
+                <div class="journey-item-modern">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content-modern">
+                        <span class="journey-year">2020</span>
+                        <h3>Digital Revolution</h3>
+                        <p>Launched mobile app and AI-powered recommendations transforming travel discovery.</p>
+                        <span class="journey-badge">📱 10K+ Downloads</span>
+                    </div>
+                </div>
+
+                <div class="journey-item-modern">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content-modern">
+                        <span class="journey-year">2023</span>
+                        <h3>Global Recognition</h3>
+                        <p>Serving 50K+ travelers across 50+ countries with 180+ unique destinations.</p>
+                        <span class="journey-badge">🌍 50K+ Travelers</span>
+                    </div>
+                </div>
+
+                <div class="journey-item-modern">
+                    <div class="journey-dot"></div>
+                    <div class="journey-content-modern">
+                        <span class="journey-year">2025</span>
+                        <h3>Shaping The Future</h3>
+                        <p>Advanced AI, sustainable initiatives, and expanded community impact worldwide.</p>
+                        <span class="journey-badge">🌱 Carbon Neutral</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Stats -->
+    <section class="impact-stats">
+        <div class="container">
+            <div class="stats-grid-modern">
+                <div class="stat-item-modern">
+                    <span class="stat-number-large">50K+</span>
+                    <span class="stat-text">Happy Travelers</span>
+                </div>
+                <div class="stat-item-modern">
+                    <span class="stat-number-large">500+</span>
+                    <span class="stat-text">Local Partners</span>
+                </div>
+                <div class="stat-item-modern">
+                    <span class="stat-number-large">180+</span>
+                    <span class="stat-text">Destinations</span>
+                </div>
+                <div class="stat-item-modern">
+                    <span class="stat-number-large">4.9★</span>
+                    <span class="stat-text">Avg Rating</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+
+    <!-- CTA Section -->
+    <section class="cta-modern">
+        <div class="container">
+            <h2>Ready to Write Your Adventure?</h2>
+            <p>Join thousands of travelers discovering the world authentically with TooNice.</p>
+            <div class="cta-buttons-modern">
+                <a href="signup.html" class="btn btn-cta-primary-modern">Start Your Journey</a>
+                <a href="index.html" class="btn btn-cta-secondary-modern">Explore Destinations</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>TooNice</h3>
+                    <p>Your trusted companion for unforgettable travel experiences worldwide.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#">Destinations</a></li>
+                        <li><a href="#">Experiences</a></li>
+                        <li><a href="#">Travel Tips</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TooNice. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#">Twitter</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Facebook</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{%static 'js/about.js'%}"></script>
+</body>
+</html>

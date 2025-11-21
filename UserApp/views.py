@@ -16,6 +16,7 @@ from .models import User
 
 
 
+
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
     login_url = 'user_signin'  # Redirige si pas connecté
@@ -81,3 +82,7 @@ class SignInView(FormView):
         login(self.request, user)
         messages.success(self.request, f"Welcome back, {user.nom}!")
         return super().form_valid(form)
+
+class AboutView(TemplateView):
+    template_name = 'about.html'
+    success_url = reverse_lazy('about')
