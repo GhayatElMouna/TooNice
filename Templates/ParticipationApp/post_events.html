@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .post-event-card {
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+
+    .post-event-card:hover {
+        transform: scale(1.02);
+    }
+
+    .post-event-image img {
+        width: 120px;
+        height: 120px;
+        border-radius: 10px;
+        object-fit: cover;
+        margin-right: 20px;
+    }
+
+    .post-event-content h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+
+    /* Star Rating CSS */
+    .star-rating {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        font-size: 1.8rem;
+        cursor: pointer;
+    }
+
+    .star-rating input {
+        display: none;
+    }
+
+    .star-rating label {
+        color: #ccc;
+        transition: color 0.2s;
+        padding: 0 3px;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: gold;
+    }
+
+    .star-rating input:checked ~ label {
+        color: gold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="my-events-section">
+    <div class="container">
+        <h1 class="mb-4">Post Events</h1>
+
+        {% if participations %}
+            {% for p in participations %}
+            {% with event=p.event %}
+            <div class="post-event-card">
+
+                <!-- Image -->
+                <div class="post-event-image">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    {% else %}
+                        <img src="{% static 'images/default_event.jpg' %}" alt="Event">
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="post-event-content">
+                    <h3>{{ event.title }}</h3>
+
+                    <!-- Interactive Star Rating -->
+                    <form method="POST" class="star-rating-form" data-participation="{{ p.id_participation }}" action="{% url 'participation:rate_event' event.id_event %}">
+                        {% csrf_token %}
+                        <div class="star-rating">
+                            <input type="radio" name="stars" id="star5-{{p.id_participation}}" value="5" {% if p.rating == 5 %}checked{% endif %}>
+                            <label for="star5-{{p.id_participation}}">★</label>
+
+                            <input type="radio" name="stars" id="star4-{{p.id_participation}}" value="4" {% if p.rating == 4 %}checked{% endif %}>
+                            <label for="star4-{{p.id_participation}}">★</label>
+
+                            <input type="radio" name="stars" id="star3-{{p.id_participation}}" value="3" {% if p.rating == 3 %}checked{% endif %}>
+                            <label for="star3-{{p.id_participation}}">★</label>
+
+                            <input type="radio" name="stars" id="star2-{{p.id_participation}}" value="2" {% if p.rating == 2 %}checked{% endif %}>
+                            <label for="star2-{{p.id_participation}}">★</label>
+
+                            <input type="radio" name="stars" id="star1-{{p.id_participation}}" value="1" {% if p.rating == 1 %}checked{% endif %}>
+                            <label for="star1-{{p.id_participation}}">★</label>
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+            {% endwith %}
+            {% endfor %}
+        {% else %}
+        <p class="text-muted">No confirmed events yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- AJAX Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.star-rating-form input[name="stars"]').forEach(input => {
+        input.addEventListener('change', function() {
+            const form = input.closest('form');
+            const url = form.action;
+            const stars = input.value;
+            const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: new URLSearchParams({stars: stars})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    alert(`Rating submitted! New average: ${data.avg.toFixed(1)}`);
+                } else {
+                    alert(data.error || 'Error submitting rating.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Error submitting rating.');
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -34,8 +34,15 @@
                 <nav class="nav-desktop">
                     <a href="{% url 'index' %}" class="nav-link">Home</a>
                     <a href="{% url 'event_list' %}" class="nav-link">Events</a>
-                    <a href="#" class="nav-link">Destinations</a>
-                    <a href="#" class="nav-link">Experiences</a>
+                    <!-- Dropdown: Events -->
+                    <div class="dropdown-container">
+                      <button class="nav-link dropdown-btn">Events ▼</button>
+                    <div class="dropdown-menu">
+                        <a href="{% url 'event_list' %}" class="dropdown-item">Upcoming Events</a>
+                        <a href="{% url 'participation:my_events' %}" class="dropdown-item">My Events</a>
+                        <a href="{% url 'participation:post_events' %}" class="dropdown-item">Post Events</a>
+                    </div>
+    </div>
                     <a href="#" class="nav-link">About</a>
                 </nav>
 
@@ -43,7 +50,6 @@
                 <div class="auth-buttons">
                     {% if user.is_authenticated %}
                         <span class="me-2">Bonjour, {{ user.username }}</span>
-                        <a href="{% url 'participation:my_events' %}" class="btn btn-outline">My Events</a>
                         <form action="{% url 'logout' %}" method="post" style="display:inline; margin:0 0 0 8px;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-outline">Logout</button>

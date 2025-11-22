@@ -733,3 +733,69 @@ body {
     from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
 }
+/* Desktop Dropdown */
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: inherit;
+    padding: 0;
+    color: inherit;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    padding: 10px 0;
+    min-width: 180px;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 20;
+}
+
+.dropdown-container:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+}
+
+.dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+/* Mobile Dropdown */
+.mobile-dropdown {
+    width: 100%;
+}
+
+.mobile-dropdown-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 12px;
+    color: white;
+    cursor: pointer;
+}
+
+.mobile-dropdown-menu {
+    display: none;
+    padding-left: 15px;
+}
+
+.mobile-dropdown.open .mobile-dropdown-menu {
+    display: block;
+}

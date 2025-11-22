@@ -57,3 +57,12 @@ mobileLinks.forEach((link) => {
 
 // Initialize carousel
 goToSlide(0)
+
+
+// Mobile dropdown for events
+document.querySelectorAll('.mobile-dropdown-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        btn.parentElement.classList.toggle('open');
+    });
+});
+

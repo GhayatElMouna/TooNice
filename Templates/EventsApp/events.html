@@ -10,25 +10,90 @@
 <section class="events-section">
     <div class="container">
         <h1 class="section-title">Upcoming Events</h1>
+
+        <!-- FILTER BAR -->
+        <form method="get" class="filter-bar">
+
+            <!-- Start Date -->
+            <div>
+                <label for="start_date">Start Date</label>
+                <input type="date" name="start_date" id="start_date" class="filter-input" value="{{ start_date }}">
+            </div>
+
+            <!-- End Date -->
+            <div>
+                <label for="end_date">End Date</label>
+                <input type="date" name="end_date" id="end_date" class="filter-input" value="{{ end_date }}">
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label for="category">Category</label>
+                <select name="category" id="category" class="filter-select">
+                    <option value="">All Categories</option>
+                    <option value="CULTURAL" {% if category == 'CULTURAL' %}selected{% endif %}>Cultural & Historical</option>
+                    <option value="MUSIC" {% if category == 'MUSIC' %}selected{% endif %}>Music & Arts</option>
+                    <option value="SEASONAL" {% if category == 'SEASONAL' %}selected{% endif %}>Seasonal & Agricultural</option>
+                    <option value="SPORT" {% if category == 'SPORT' %}selected{% endif %}>Sporting Events</option>
+                    <option value="CRAFT" {% if category == 'CRAFT' %}selected{% endif %}>Craftsmanship & Shopping</option>
+                </select>
+            </div>
+
+            <!-- State -->
+            <div>
+                <label for="state">State</label>
+                <select name="state" id="state" class="filter-select">
+                    <option value="">All Tunisia States</option>
+                    <option value="Tunis" {% if state == 'Tunis' %}selected{% endif %}>Tunis</option>
+                    <option value="Ariana" {% if state == 'Ariana' %}selected{% endif %}>Ariana</option>
+                    <option value="Ben Arous" {% if state == 'Ben Arous' %}selected{% endif %}>Ben Arous</option>
+                    <option value="Manouba" {% if state == 'Manouba' %}selected{% endif %}>Manouba</option>
+                    <option value="Nabeul" {% if state == 'Nabeul' %}selected{% endif %}>Nabeul</option>
+                    <option value="Zaghouan" {% if state == 'Zaghouan' %}selected{% endif %}>Zaghouan</option>
+                    <option value="Bizerte" {% if state == 'Bizerte' %}selected{% endif %}>Bizerte</option>
+                    <option value="Beja" {% if state == 'Beja' %}selected{% endif %}>Beja</option>
+                    <option value="Jendouba" {% if state == 'Jendouba' %}selected{% endif %}>Jendouba</option>
+                    <option value="Kef" {% if state == 'Kef' %}selected{% endif %}>Kef</option>
+                    <option value="Siliana" {% if state == 'Siliana' %}selected{% endif %}>Siliana</option>
+                    <option value="Sousse" {% if state == 'Sousse' %}selected{% endif %}>Sousse</option>
+                    <option value="Monastir" {% if state == 'Monastir' %}selected{% endif %}>Monastir</option>
+                    <option value="Mahdia" {% if state == 'Mahdia' %}selected{% endif %}>Mahdia</option>
+                    <option value="Kairouan" {% if state == 'Kairouan' %}selected{% endif %}>Kairouan</option>
+                    <option value="Kasserine" {% if state == 'Kasserine' %}selected{% endif %}>Kasserine</option>
+                    <option value="Sidi Bouzid" {% if state == 'Sidi Bouzid' %}selected{% endif %}>Sidi Bouzid</option>
+                    <option value="Gabes" {% if state == 'Gabes' %}selected{% endif %}>Gabes</option>
+                    <option value="Medenine" {% if state == 'Medenine' %}selected{% endif %}>Medenine</option>
+                    <option value="Tataouine" {% if state == 'Tataouine' %}selected{% endif %}>Tataouine</option>
+                    <option value="Gafsa" {% if state == 'Gafsa' %}selected{% endif %}>Gafsa</option>
+                    <option value="Tozeur" {% if state == 'Tozeur' %}selected{% endif %}>Tozeur</option>
+                    <option value="Kebili" {% if state == 'Kebili' %}selected{% endif %}>Kebili</option>
+                    <option value="Sfax" {% if state == 'Sfax' %}selected{% endif %}>Sfax</option>
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" class="filter-btn apply">Apply</button>
+                <a href="{% url 'event_list' %}" class="filter-btn reset">Clear</a>
+            </div>
+        </form>
+        <!-- END FILTER BAR -->
+
+        <!-- EVENTS GRID -->
         <div class="events-grid">
             {% for event in events %}
             <div class="event-card">
                 {% if event.image %}
                 <div class="event-image">
-                    <img src="{{ event.image.url }}" alt="{{ event.title }}"  style="max-height: 400px; object-fit: cover;">
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}" style="max-height: 400px; object-fit: cover;">
                 </div>
                 {% endif %}
                 <div class="event-content">
                     <h3 class="event-title">{{ event.title }}</h3>
-                    <p class="event-location">
-                        <i class="fas fa-map-marker-alt"></i>
-                        {{ event.place }}
-                    </p>
-                    <p class="event-date">
-                        <i class="fas fa-calendar"></i>
-                        {{ event.date_debut }} - {{ event.date_fin }}
-                    </p>
+                    <p class="event-location"><i class="fas fa-map-marker-alt"></i> {{ event.place }}</p>
+                    <p class="event-date"><i class="fas fa-calendar"></i> {{ event.date_debut }} - {{ event.date_fin }}</p>
+
                     <a href="{% url 'event_detail' event.id_event %}" class="btn-show-more">Show More</a>
+
                     {% if user.is_authenticated %}
                     <form method="post" action="{% url 'participation:register_event' event.id_event %}" style="display:inline; margin-left:8px;">
                         {% csrf_token %}
@@ -43,6 +108,7 @@
             <p>No upcoming events found.</p>
             {% endfor %}
         </div>
+        <!-- END EVENTS GRID -->
     </div>
 </section>
 {% endblock %}
