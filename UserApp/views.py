@@ -9,6 +9,8 @@ from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.utils import timezone
 from datetime import timedelta
+
+
 class RegisterView(CreateView):
     model=User
     form_class=UserRegisterForm

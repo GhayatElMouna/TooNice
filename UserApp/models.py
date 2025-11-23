@@ -16,7 +16,7 @@ from datetime import timedelta
 
 
 def validateEmail(value):
-    allowed_domains = ['esprit.tn','univ.tn','mit.edu','ox.ac.uk']
+    allowed_domains = ['gmail.com','esprit.tn','univ.tn','mit.edu','ox.ac.uk']
     domain = value.split('@')[-1]
     if domain not in allowed_domains:
         raise ValidationError(f"Email domain '{domain}' is not allowed. Allowed domains are: {', '.join(allowed_domains)}") 

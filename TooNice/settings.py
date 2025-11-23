@@ -136,6 +136,3 @@ AUTH_USER_MODEL='UserApp.User'
 LOGIN_REDIRECT_URL='home'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL='login'
-AUTHENTICATION_BACKENDS = [
-    'UserApp.auth_backend.BlockedUserBackend',
-]

@@ -8,12 +8,35 @@ from .models import Article
 from .forms import ArticleForm
 from django.views.generic import TemplateView
 from django.contrib import messages
-from django.shortcuts import get_object_or_404, render
-from UserApp.utils.ia_text_filtrer import contains_inappropriate
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.shortcuts import redirect
+from django.http import JsonResponse
+from .ai_filtrer.toxicity_detector import contains_inappropriate  # ⚡ Corrige le nom exact du dossier
 
 
-#nbre de views
+
+
+
+
+'''def check_message(request):
+    if request.method == "POST":
+        message = request.POST.get("message", "")
+
+        if contains_inappropriate(message):
+            return JsonResponse(
+                {"error": "Your message contains inappropriate content"},
+                status=400
+            )
+
+        return JsonResponse({"success": True})'''
+
+
+
+
+
+
+
 
 
 # Like / Dislike
@@ -109,48 +132,63 @@ class ArticleDetailView(DetailView):
 
         return super().get(request, *args, **kwargs)
 
+  # IA ⚡
+
+
 class ArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
     form_class = ArticleForm
     success_url = reverse_lazy('article_list_view')
 
     def form_valid(self, form):
-        # ⚡ Assigner l'utilisateur **avant toute validation ou accès au profil**
+        # Associer l'utilisateur à l'article
         form.instance.user = self.request.user
 
-        # Maintenant on peut accéder au profil
+        # Profil utilisateur (pour blocage)
         profile = self.request.user.userprofile
 
-        # Vérifier si l'utilisateur est bloqué
+        # 1️⃣ Vérifier si l'utilisateur est déjà bloqué
         if profile.is_blocked():
             messages.error(
                 self.request,
-                f"🚫 Vous êtes bloqué jusqu'au {profile.blocked_until.strftime('%d/%m/%Y %H:%M')}"
+                f"🚫 Vous êtes bloqué jusqu'au {profile.blocked_until.strftime('%d/%m/%Y %H:%M')}."
             )
             return redirect('article_list_view')
 
-        # Vérification IA
-        if contains_inappropriate(form.instance.description):
+        # 2️⃣ Vérification IA sur titre + description
+        title = form.cleaned_data.get("titre", "")
+        description = form.cleaned_data.get("description", "")
+
+        if contains_inappropriate(title) or contains_inappropriate(description):
+            # Compter les tentatives
             profile.bad_post_attempts += 1
             profile.save()
+
+            # Bloquer si 2 tentatives
             if profile.bad_post_attempts >= 2:
                 profile.block_for_two_days()
                 messages.error(
                     self.request,
-                    "🚫 Vous avez été bloqué pendant 2 jours pour contenu inapproprié."
+                    "🚫 Vous avez été bloqué pendant 2 jours pour avoir tenté de publier du contenu inapproprié."
                 )
                 return redirect('article_list_view')
-            messages.warning(self.request, "⚠ Contenu inapproprié détecté par IA !")
+
+            # Première tentative → simple avertissement
+            messages.warning(
+                self.request,
+                "⚠ Contenu inapproprié détecté par l'IA. Votre article n'a pas été publié."
+            )
             return redirect('article_list_view')
 
-        # Publier l'article normalement
+        # 3️⃣ Si tout est propre → publier l'article
         response = super().form_valid(form)
 
-        # Réinitialiser le compteur si tout va bien
+        # Réinitialiser les mauvaises tentatives si OK
         profile.bad_post_attempts = 0
         profile.save()
 
         return response
+
 
 
 
@@ -166,8 +204,26 @@ class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return obj.user == self.request.user
 
     def form_valid(self, form):
-        # Preserve/replace media file cleanly: if a new file is uploaded, remove the old file
         obj = form.instance
+        profile = self.request.user.userprofile
+
+        # Vérification du contenu via IA
+        if contains_inappropriate(form.instance.description):
+            profile.bad_post_attempts += 1
+            profile.save()
+
+            if profile.bad_post_attempts >= 2:
+                profile.block_for_two_days()
+                messages.error(
+                    self.request,
+                    "🚫 Vous avez été bloqué pendant 2 jours pour contenu inapproprié."
+                )
+                return redirect('article_list_view')
+
+            messages.warning(self.request, "⚠ Contenu inapproprié détecté par IA !")
+            return redirect('article_list_view')
+
+        # Gestion propre du fichier média
         try:
             old = Article.objects.get(pk=obj.pk)
         except Article.DoesNotExist:
@@ -177,7 +233,6 @@ class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
         response = super().form_valid(form)
 
-        # After saving, if a new file was uploaded and an old file existed, delete the old file
         if new_file and old and old.chemin_media and old.chemin_media.name != obj.chemin_media.name:
             try:
                 old.chemin_media.delete(save=False)
@@ -185,6 +240,11 @@ class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                 pass
 
         messages.success(self.request, 'Article mis à jour avec succès.')
+        
+        # Réinitialiser le compteur si tout va bien
+        profile.bad_post_attempts = 0
+        profile.save()
+
         return response
 
 class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

@@ -15,4 +15,5 @@ urlpatterns = [
     path('delete/<int:pk>/', ArticleDeleteView.as_view(), name='article_delete_view'),
     path('article/<int:pk>/like/', views.like_article, name='article_like'),
     path('article/<int:pk>/dislike/', views.dislike_article, name='article_dislike'),
+   
 ]
