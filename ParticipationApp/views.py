@@ -4,6 +4,7 @@ from django.contrib import messages
 from EventApp.models import Event
 from .models import Participation, Rating
 from django.http import JsonResponse
+from django.utils.timezone import localdate
 
 
 @login_required
@@ -34,23 +35,19 @@ def register_event(request, event_id):
 	return redirect('event_list')
 
 
-"""def my_events(request):
-	participations = Participation.objects.filter(user=request.user).select_related('event')
-    ############################################
-    participations = Participation.objects.filter(
-    user=request.user,
-    confirmed=False
-    ).select_related('event')
-
-
-    ##########################################
-	events = [p.event for p in participations]
-	return render(request, 'ParticipationApp/my_events.html', {'events': events})"""
-@login_required
+"""@login_required
 def my_events(request):
     participations = Participation.objects.filter(
         user=request.user,
         confirmed=False
+    ).select_related('event')
+
+    return render(request, 'ParticipationApp/my_events.html', {'participations': participations})"""
+
+@login_required
+def my_events(request):
+    participations = Participation.objects.filter(
+        user=request.user
     ).select_related('event')
 
     return render(request, 'ParticipationApp/my_events.html', {'participations': participations})
@@ -139,18 +136,26 @@ def confirm_reservation(request, participation_id):
     return redirect('participation:my_events')
 
 
-@login_required
+
 def post_events(request):
     participations = Participation.objects.filter(
         user=request.user,
         confirmed=True
     ).select_related('event')
 
+    # Add is_finished flag to each event
+    today = localdate()
+    for p in participations:
+        
+        p.event.is_finished = p.event.date_fin <= today
+        p.event.stars_display = round(p.event.score_avg)  # arrondi à l'entier le plus proche
+
+
     return render(request, "ParticipationApp/post_events.html", {"participations": participations})
 
 
 
-@login_required
+
 
 @login_required
 def rate_event(request, event_id):
@@ -158,7 +163,6 @@ def rate_event(request, event_id):
         return JsonResponse({"success": False, "error": "Invalid request method."})
 
     stars_str = request.POST.get("stars")
-
     if not stars_str:
         return JsonResponse({"success": False, "error": "No rating value received."})
 
@@ -170,7 +174,6 @@ def rate_event(request, event_id):
     if stars < 1 or stars > 5:
         return JsonResponse({"success": False, "error": "Rating must be 1 to 5."})
 
-    # Check user finished this event
     participation = Participation.objects.filter(
         user=request.user,
         event_id=event_id,
@@ -180,6 +183,11 @@ def rate_event(request, event_id):
     if not participation:
         return JsonResponse({"success": False, "error": "You cannot rate this event."})
 
+    # Check if the event is finished
+    event = participation.event
+    if event.date_fin > localdate():
+        return JsonResponse({"success": False, "error": "Vous ne pouvez pas noter un événement non terminé."})
+
     # Create/update rating
     rating, created = Rating.objects.update_or_create(
         user=request.user,
@@ -187,8 +195,7 @@ def rate_event(request, event_id):
         defaults={'stars': stars}
     )
 
-    # Recalculate event average
-    event = rating.event
+    # Recalculate average
     all_ratings = event.ratings.all()
     avg = sum(r.stars for r in all_ratings) / len(all_ratings)
     event.score_avg = avg
@@ -199,3 +206,4 @@ def rate_event(request, event_id):
         "avg": avg,
         "message": "Rating saved!"
     })
+

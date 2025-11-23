@@ -38,11 +38,11 @@ class Event(models.Model):
     def clean(self):
         super().clean()
         # Ensure the start date is not in the past (must be today or later)
-        if self.date_debut:
-            if self.date_debut < date.today():
-                raise ValidationError({
-                    'date_debut': _('Start date cannot be in the past.'),
-                })
+        #if self.date_debut:
+        #    if self.date_debut < date.today():
+        #        raise ValidationError({
+        #            'date_debut': _('Start date cannot be in the past.'),
+        #        })
 
         # Ensure start is not after end
         if self.date_debut and self.date_fin:

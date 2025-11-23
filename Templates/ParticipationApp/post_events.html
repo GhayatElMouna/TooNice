@@ -83,9 +83,25 @@
                 <!-- Content -->
                 <div class="post-event-content">
                     <h3>{{ event.title }}</h3>
+                    {% if event.is_finished %}                      
+                        <div class="event-rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= event.stars_display %}
+                                    <span style="color: gold;">★</span>
+                                {% else %}
+                                    <span style="color: #ccc;">★</span>
+                                {% endif %}
+                            {% endfor %}
+                            <span style="margin-left:5px;">({{ event.score_avg|floatformat:1 }})</span>
+                        </div>
+                    {% endif %}
+
+                                        
 
                     <!-- Interactive Star Rating -->
+                    {% if event.is_finished %}
                     <form method="POST" class="star-rating-form" data-participation="{{ p.id_participation }}" action="{% url 'participation:rate_event' event.id_event %}">
+                        <h5>Rate this event nd help us improve our service.</h5>
                         {% csrf_token %}
                         <div class="star-rating">
                             <input type="radio" name="stars" id="star5-{{p.id_participation}}" value="5" {% if p.rating == 5 %}checked{% endif %}>
@@ -104,6 +120,9 @@
                             <label for="star1-{{p.id_participation}}">★</label>
                         </div>
                     </form>
+                    {% else %}
+                    <p class="text-muted mt-2">You are welcome to rate this event when it's over.</p>
+                    {% endif %}
 
                 </div>
 
