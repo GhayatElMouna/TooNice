@@ -41,6 +41,12 @@
                         <a href="{% url 'event_list' %}" class="dropdown-item">Upcoming Events</a>
                         <a href="{% url 'participation:my_events' %}" class="dropdown-item">My Events</a>
                         <a href="{% url 'participation:post_events' %}" class="dropdown-item">Post Events</a>
+                        {% if request.user.is_staff %}
+                           <li>
+                                  <a href="{% url 'event_stats' %}">Event Statistics</a>
+                           </li>
+                        {% endif %}
+
                     </div>
     </div>
                     <a href="#" class="nav-link">About</a>

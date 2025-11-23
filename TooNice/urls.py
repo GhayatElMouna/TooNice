@@ -22,6 +22,10 @@ from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from EventApp import views
 from UserApp.views import RegisterView
+from EventApp.views import event_stats
+
+
+
    
 
 
@@ -36,6 +40,9 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page=reverse_lazy('index')), name='logout'),
     path('register/', RegisterView.as_view(), name='inscription'),
     path('participation/', include('ParticipationApp.urls')),
+    path("events/stats/ratings/", event_stats, name="event_stats"),
+
+
 
 
 ]

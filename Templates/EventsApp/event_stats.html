@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- Wrapper div controls the chart size -->
+    <div style="width: 500px; height: 500px; margin: auto;">
+        <canvas id="scoreChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById("scoreChart").getContext("2d");
+
+    const chartLabels = {{ labels|safe }};
+    const chartData = {{ scores|safe }};
+
+    new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false, // allows it to fit the wrapper div
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Event Ratings Distribution (%)"
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
