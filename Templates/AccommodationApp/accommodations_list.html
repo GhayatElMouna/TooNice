@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load accommodation_filters %}
 
 {% block title %}Gestion des Accommodations - TooNice{% endblock %}
 
@@ -219,8 +220,28 @@
     }
 
     /* PAGINATION */
-    .pagination {
+    .pagination-wrapper {
         margin-top: 48px;
+        padding: 24px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 16px rgba(0, 102, 255, 0.08);
+        border: 2px solid #e0e6ed;
+    }
+
+    .pagination-info {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #7f8c8d;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    .pagination {
+        margin: 0;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 
     .pagination .page-link {
@@ -229,14 +250,17 @@
         border-radius: 12px;
         font-weight: 600;
         padding: 10px 16px;
-        margin: 0 4px;
+        min-width: 44px;
+        text-align: center;
         transition: all 0.3s ease;
+        background: white;
     }
 
     .pagination .page-link:hover {
         background: rgba(0, 102, 255, 0.1);
         border-color: #0066FF;
         transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 102, 255, 0.15);
     }
 
     .pagination .page-item.active .page-link {
@@ -244,12 +268,46 @@
         border-color: #0066FF;
         color: white;
         box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+        font-weight: 700;
     }
 
     .pagination .page-item.disabled .page-link {
         color: #cbd5e1;
         border-color: #e2e8f0;
         cursor: not-allowed;
+        background: #f8f9fa;
+    }
+
+    .pagination .page-item.disabled .page-link:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Badge "Nouveau" pour les logements récents */
+    .badge-new {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+        z-index: 10;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
     }
 
     /* Alert */
@@ -318,7 +376,15 @@
         </div>
 
         <!-- TITLE -->
-        <h2 class="section-title">Découvrez nos logements</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title mb-0">Découvrez nos logements</h2>
+            {% if page_obj %}
+            <div class="text-muted" style="font-weight: 600;">
+                <i class="fas fa-list"></i> 
+                Affichage de {{ page_obj.start_index }} à {{ page_obj.end_index }} sur {{ page_obj.paginator.count }} logement{{ page_obj.paginator.count|pluralize }}
+            </div>
+            {% endif %}
+        </div>
 
         <div class="card border-0 shadow-sm">
             <div class="card-body">
@@ -328,6 +394,12 @@
 {% for acc in accommodations %}
                         <div class="col-md-6 col-lg-4 mb-4">
                             <div class="accommodation-card">
+                                {% comment %} Badge "Nouveau" pour les logements ajoutés dans les 2 derniers jours {% endcomment %}
+                                {% if acc.date_ajoutee|is_recent:2 %}
+                                    <span class="badge-new">
+                                        <i class="fas fa-sparkles"></i> Nouveau
+                                    </span>
+                                {% endif %}
                                 <div class="card-body">
 
                                     <h5 class="card-title">{{ acc.titre }}</h5>
@@ -388,24 +460,86 @@
     </div>
 
                 <!-- PAGINATION -->
-                {% if is_paginated %}
-                    <nav>
-                        <ul class="pagination justify-content-center mt-4">
+                {% if page_obj.has_other_pages %}
+                <div class="pagination-wrapper">
+                    <div class="pagination-info">
+                        <i class="fas fa-info-circle"></i> 
+                        Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }} 
+                        ({{ page_obj.paginator.count }} logement{{ page_obj.paginator.count|pluralize }} au total)
+                    </div>
+                    <nav aria-label="Navigation des pages">
+                        <ul class="pagination">
                             {% if page_obj.has_previous %}
-                                <li class="page-item"><a class="page-link" href="?page=1">Première</a></li>
-                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Précédent</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" title="Première page">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" title="Page précédente">
+                                        <i class="fas fa-angle-left"></i> Précédent
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </span>
+                                </li>
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-angle-left"></i> Précédent
+                                    </span>
+                                </li>
                             {% endif %}
 
-                            <li class="page-item active">
-                                <span class="page-link">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</span>
-                            </li>
+                            {% comment %} Afficher les numéros de page {% endcomment %}
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% elif num == page_obj.number|add:'-4' or num == page_obj.number|add:'4' %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
 
                             {% if page_obj.has_next %}
-                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Suivant</a></li>
-                                <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Dernière</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" title="Page suivante">
+                                        Suivant <i class="fas fa-angle-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" title="Dernière page">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        Suivant <i class="fas fa-angle-right"></i>
+                                    </span>
+                                </li>
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </span>
+                                </li>
                             {% endif %}
                         </ul>
                     </nav>
+                </div>
                 {% endif %}
 
             {% else %}

@@ -358,6 +358,360 @@
             margin-bottom: 20px;
             display: block;
         }
+        
+        .avis-section {
+            background: white;
+            border-radius: 24px;
+            padding: 36px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(0, 102, 255, 0.1);
+            border: 2px solid #e0e6ed;
+        }
+        
+        .note-moyenne-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
+            border-radius: 16px;
+            border: 2px solid #e0f0ff;
+        }
+        
+        .note-moyenne-value {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0066FF 0%, #00BFFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .note-moyenne-info {
+            flex: 1;
+        }
+        
+        .note-moyenne-info h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .note-moyenne-info p {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .stars-display {
+            display: flex;
+            gap: 4px;
+            font-size: 24px;
+        }
+        
+        .star-filled {
+            color: #FFD700;
+        }
+        
+        .star-empty {
+            color: #e0e6ed;
+        }
+        
+        .star-half {
+            background: linear-gradient(90deg, #FFD700 50%, #e0e6ed 50%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .avis-form-container {
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.02) 0%, rgba(0, 255, 136, 0.02) 100%);
+            padding: 24px;
+            border-radius: 16px;
+            border: 2px solid #e0e6ed;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .star-rating-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .star-rating-input .stars-display {
+            font-size: 32px;
+            cursor: pointer;
+        }
+        
+        .star-rating-input .stars-display .star {
+            transition: all 0.2s ease;
+        }
+        
+        .star-rating-input .stars-display .star:hover {
+            transform: scale(1.2);
+        }
+        
+        .star-rating-input input[type="range"] {
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .star-rating-input .note-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0066FF;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .avis-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .avis-item {
+            border: 2px solid #e0e6ed;
+            border-radius: 16px;
+            padding: 24px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .avis-item:hover {
+            border-color: #0066FF;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.1);
+        }
+        
+        .avis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .avis-user {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .avis-date {
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+        
+        .avis-note {
+            margin-bottom: 12px;
+        }
+        
+        .avis-commentaire {
+            color: #7f8c8d;
+            line-height: 1.7;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+        
+        .btn-submit-avis {
+            background: linear-gradient(135deg, #0066FF 0%, #00BFFF 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+        }
+        
+        .btn-submit-avis:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 102, 255, 0.4);
+        }
+        
+        .no-avis {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .no-avis i {
+            font-size: 64px;
+            color: #e0e6ed;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        /* Styles pour le calendrier */
+        .calendrier-section {
+            background: white;
+            border-radius: 24px;
+            padding: 36px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 32px rgba(0, 102, 255, 0.1);
+            border: 2px solid #e0e6ed;
+        }
+        
+        .calendrier-container {
+            margin-top: 24px;
+        }
+        
+        .calendrier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
+            border-radius: 12px;
+        }
+        
+        .calendrier-nav {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .calendrier-nav button {
+            background: linear-gradient(135deg, #0066FF 0%, #00BFFF 100%);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .calendrier-nav button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+        }
+        
+        .calendrier-mois-annee {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .calendrier-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .calendrier-jour-nom {
+            text-align: center;
+            font-weight: 700;
+            color: #7f8c8d;
+            font-size: 14px;
+            padding: 8px;
+        }
+        
+        .calendrier-jour {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .calendrier-jour:hover {
+            transform: scale(1.05);
+            z-index: 1;
+        }
+        
+        .calendrier-jour.disponible {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            border-color: #4caf50;
+        }
+        
+        .calendrier-jour.occupe {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: #c62828;
+            border-color: #ef5350;
+            cursor: not-allowed;
+        }
+        
+        .calendrier-jour.autre-mois {
+            color: #bdc3c7;
+            background: #f8f9fa;
+            border-color: #e9ecef;
+        }
+        
+        .calendrier-jour.aujourdhui {
+            border: 3px solid #0066FF;
+            font-weight: 800;
+        }
+        
+        .calendrier-legend {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .calendrier-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .calendrier-legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid;
+        }
+        
+        .legend-disponible {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-color: #4caf50;
+        }
+        
+        .legend-occupe {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-color: #ef5350;
+        }
+        
+        .calendrier-loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
     </style>
 {% endblock %}
 
@@ -484,12 +838,318 @@
                     </div>
                 {% endif %}
             </div>
+            
+            <!-- Section Calendrier de Disponibilité -->
+            <div class="calendrier-section">
+                <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Calendrier de Disponibilité</h2>
+                <div class="calendrier-container">
+                    <div class="calendrier-header">
+                        <div class="calendrier-nav">
+                            <button id="prevMonth" title="Mois précédent">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button id="nextMonth" title="Mois suivant">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="calendrier-mois-annee" id="calendrierMoisAnnee"></div>
+                        <div style="width: 100px;"></div>
+                    </div>
+                    <div id="calendrierGrid" class="calendrier-loading">
+                        <i class="fas fa-spinner fa-spin"></i> Chargement du calendrier...
+                    </div>
+                    <div class="calendrier-legend">
+                        <div class="calendrier-legend-item">
+                            <div class="calendrier-legend-color legend-disponible"></div>
+                            <span>Disponible</span>
+                        </div>
+                        <div class="calendrier-legend-item">
+                            <div class="calendrier-legend-color legend-occupe"></div>
+                            <span>Occupé</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section Avis -->
+            <div class="avis-section">
+                <h2 class="section-title"><i class="fas fa-star"></i> Avis des clients</h2>
+                
+                <!-- Note moyenne -->
+                {% if note_moyenne %}
+                <div class="note-moyenne-container">
+                    <div class="note-moyenne-value">{{ note_moyenne }}</div>
+                    <div class="note-moyenne-info">
+                        <h3>Note moyenne</h3>
+                        <div class="stars-display">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= note_moyenne|floatformat:0|add:"0" %}
+                                    <i class="fas fa-star star-filled"></i>
+                                {% else %}
+                                    <i class="far fa-star star-empty"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p>{{ nombre_avis }} avis{% if nombre_avis > 1 %}s{% endif %}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="note-moyenne-container">
+                    <div class="note-moyenne-info">
+                        <h3>Aucun avis pour le moment</h3>
+                        <p>Soyez le premier à laisser un avis!</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Formulaire pour laisser un avis -->
+                {% if user.is_authenticated %}
+                <div class="avis-form-container">
+                    <h3 style="font-size: 20px; font-weight: 700; color: #2c3e50; margin-bottom: 20px;">
+                        {% if user_note %}
+                            <i class="fas fa-edit"></i> Modifier votre avis
+                        {% else %}
+                            <i class="fas fa-star"></i> Laisser un avis
+                        {% endif %}
+                    </h3>
+                    <form method="post" action="{% url 'accommodation:note_create_update' accommodation.pk %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Note sur 5 étoiles</label>
+                            <div class="star-rating-input">
+                                <div class="stars-display" id="starDisplay">
+                                    {% for i in "12345" %}
+                                        <i class="far fa-star star" data-rating="{{ forloop.counter }}"></i>
+                                    {% endfor %}
+                                </div>
+                                <input type="range" 
+                                       class="form-range" 
+                                       id="noteRange" 
+                                       name="note" 
+                                       min="1" 
+                                       max="5" 
+                                       value="{% if user_note %}{{ user_note.note }}{% else %}5{% endif %}" 
+                                       required>
+                                <span class="note-value" id="noteValue">{% if user_note %}{{ user_note.note }}{% else %}5{% endif %}</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_commentaire">Commentaire (optionnel)</label>
+                            <textarea name="commentaire" 
+                                      id="id_commentaire" 
+                                      class="form-control" 
+                                      rows="4" 
+                                      placeholder="Partagez votre expérience...">{% if user_note %}{{ user_note.commentaire }}{% endif %}</textarea>
+                        </div>
+                        <button type="submit" class="btn-submit-avis">
+                            <i class="fas fa-paper-plane"></i> {% if user_note %}Mettre à jour{% else %}Publier{% endif %} l'avis
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="avis-form-container" style="text-align: center; padding: 20px;">
+                    <p style="color: #7f8c8d; margin: 0;">
+                        <i class="fas fa-lock"></i> Connectez-vous pour laisser un avis
+                    </p>
+                </div>
+                {% endif %}
+                
+                <!-- Liste des avis -->
+                {% if notes %}
+                <div class="avis-list">
+                    {% for note in notes %}
+                    <div class="avis-item">
+                        <div class="avis-header">
+                            <div class="avis-user">
+                                <i class="fas fa-user-circle"></i> {{ note.utilisateur.username }}
+                            </div>
+                            <div class="avis-date">
+                                {{ note.date_ajoutee|date:"d/m/Y" }}
+                            </div>
+                        </div>
+                        <div class="avis-note">
+                            <div class="stars-display">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= note.note %}
+                                        <i class="fas fa-star star-filled"></i>
+                                    {% else %}
+                                        <i class="far fa-star star-empty"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if note.commentaire %}
+                        <div class="avis-commentaire">
+                            {{ note.commentaire }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-avis">
+                    <i class="fas fa-comments"></i>
+                    <p>Aucun avis pour le moment</p>
+                </div>
+                {% endif %}
+            </div>
         </div>
     </section>
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Gestion de l'affichage des étoiles pour le formulaire
+    document.addEventListener('DOMContentLoaded', function() {
+        const starDisplay = document.getElementById('starDisplay');
+        const noteRange = document.getElementById('noteRange');
+        const noteValue = document.getElementById('noteValue');
+        const stars = starDisplay.querySelectorAll('.star');
+        
+        // Fonction pour mettre à jour l'affichage des étoiles
+        function updateStars(rating) {
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                    star.classList.add('star-filled');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                    star.classList.remove('star-filled');
+                }
+            });
+            noteValue.textContent = rating;
+        }
+        
+        // Initialiser l'affichage
+        updateStars(parseInt(noteRange.value));
+        
+        // Mettre à jour quand le slider change
+        noteRange.addEventListener('input', function() {
+            updateStars(parseInt(this.value));
+        });
+        
+        // Permettre de cliquer sur les étoiles
+        stars.forEach((star, index) => {
+            star.addEventListener('click', function() {
+                const rating = index + 1;
+                noteRange.value = rating;
+                updateStars(rating);
+            });
+        });
+        
+        // Calendrier de disponibilité
+        let currentDate = new Date();
+        let datesOccupees = [];
+        const accommodationId = {{ accommodation.id }};
+        
+        // Noms des jours et mois en français
+        const joursSemaine = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+        const moisNoms = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
+                          'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        
+        // Fonction pour formater une date au format YYYY-MM-DD (sans conversion UTC)
+        function formaterDateLocale(date) {
+            const annee = date.getFullYear();
+            const mois = String(date.getMonth() + 1).padStart(2, '0');
+            const jour = String(date.getDate()).padStart(2, '0');
+            return `${annee}-${mois}-${jour}`;
+        }
+        
+        // Charger les disponibilités
+        async function chargerDisponibilites() {
+            try {
+                const response = await fetch(`/accommodations/${accommodationId}/disponibilites/`);
+                const data = await response.json();
+                datesOccupees = data.dates_occupees || [];
+                afficherCalendrier();
+            } catch (error) {
+                console.error('Erreur lors du chargement des disponibilités:', error);
+                document.getElementById('calendrierGrid').innerHTML = 
+                    '<p style="text-align: center; color: #ef4444;">Erreur lors du chargement du calendrier</p>';
+            }
+        }
+        
+        function afficherCalendrier() {
+            const annee = currentDate.getFullYear();
+            const mois = currentDate.getMonth();
+            
+            // Mettre à jour le titre
+            document.getElementById('calendrierMoisAnnee').textContent = 
+                `${moisNoms[mois]} ${annee}`;
+            
+            // Premier jour du mois
+            const premierJour = new Date(annee, mois, 1);
+            const dernierJour = new Date(annee, mois + 1, 0);
+            const joursDansMois = dernierJour.getDate();
+            const jourDebutSemaine = premierJour.getDay();
+            
+            // Créer le calendrier
+            let html = '<div class="calendrier-grid">';
+            
+            // En-têtes des jours
+            joursSemaine.forEach(jour => {
+                html += `<div class="calendrier-jour-nom">${jour}</div>`;
+            });
+            
+            // Jours vides avant le premier jour du mois
+            for (let i = 0; i < jourDebutSemaine; i++) {
+                html += '<div class="calendrier-jour autre-mois"></div>';
+            }
+            
+            // Jours du mois
+            const aujourdhui = new Date();
+            aujourdhui.setHours(0, 0, 0, 0);
+            
+            for (let jour = 1; jour <= joursDansMois; jour++) {
+                const dateCourante = new Date(annee, mois, jour);
+                // Utiliser formaterDateLocale au lieu de toISOString() pour éviter le décalage UTC
+                const dateStr = formaterDateLocale(dateCourante);
+                
+                let classes = 'calendrier-jour';
+                
+                // Vérifier si c'est aujourd'hui
+                if (dateCourante.getTime() === aujourdhui.getTime()) {
+                    classes += ' aujourdhui';
+                }
+                
+                // Vérifier si la date est occupée
+                if (datesOccupees.includes(dateStr)) {
+                    classes += ' occupe';
+                } else {
+                    classes += ' disponible';
+                }
+                
+                html += `<div class="${classes}" data-date="${dateStr}" title="${dateStr}">${jour}</div>`;
+            }
+            
+            // Jours vides après le dernier jour du mois
+            const joursRestants = 42 - (jourDebutSemaine + joursDansMois);
+            for (let i = 0; i < joursRestants; i++) {
+                html += '<div class="calendrier-jour autre-mois"></div>';
+            }
+            
+            html += '</div>';
+            document.getElementById('calendrierGrid').innerHTML = html;
+        }
+        
+        // Navigation du calendrier
+        document.getElementById('prevMonth').addEventListener('click', function() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            afficherCalendrier();
+        });
+        
+        document.getElementById('nextMonth').addEventListener('click', function() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            afficherCalendrier();
+        });
+        
+        // Charger le calendrier au chargement de la page
+        chargerDisponibilites();
+    });
+</script>
 {% endblock %}
 
 

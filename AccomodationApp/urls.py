@@ -24,4 +24,10 @@ urlpatterns = [
     # CRUD Photo
     path('photos/create/', views.PhotoCreateView.as_view(), name='photo_create'),
     path('photos/<int:pk>/delete/', views.PhotoDeleteView.as_view(), name='photo_delete'),
+    
+    # Avis / Notes
+    path('accommodations/<int:accommodation_id>/note/', views.NoteCreateUpdateView.as_view(), name='note_create_update'),
+    
+    # Disponibilités / Calendrier
+    path('accommodations/<int:accommodation_id>/disponibilites/', views.DisponibiliteView.as_view(), name='disponibilites'),
 ]

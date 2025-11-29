@@ -1,8 +1,10 @@
 from django.db import models
 from django.conf import settings
-from django.core.validators import RegexValidator, MinValueValidator, FileExtensionValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator, FileExtensionValidator
 from django.utils import timezone
-from datetime import date
+from django.db.models import Q
+from datetime import date, timedelta
+
 class Accommodation(models.Model):
     # --- Validator pour le titre (lettres, chiffres, espaces)
     titre_validator = RegexValidator(
@@ -67,8 +69,35 @@ class Accommodation(models.Model):
         """Retourne le nombre total de chambres pour cette accommodation"""
         return self.chambres.count()
 
-   
-
+    def get_note_moyenne(self):
+        """Retourne la note moyenne sur 5 étoiles"""
+        notes = self.notes.all()
+        if notes.exists():
+            moyenne = sum(note.note for note in notes) / notes.count()
+            return round(moyenne, 1)
+        return None
+    
+    def get_nombre_avis(self):
+        """Retourne le nombre total d'avis"""
+        return self.notes.count()
+    
+    def get_dates_occupees(self):
+        """Retourne toutes les dates occupées pour cette accommodation"""
+        dates_occupees = set()
+        for chambre in self.chambres.all():
+            for reservation in chambre.reservations.filter(statut__in=['en_attente', 'confirmee']):
+                current_date = reservation.date_debut
+                while current_date <= reservation.date_fin:
+                    dates_occupees.add(current_date)
+                    current_date += timedelta(days=1)
+        return sorted(dates_occupees)
+    
+    def is_disponible(self, date_debut, date_fin):
+        """Vérifie si l'accommodation est disponible pour une période donnée"""
+        for chambre in self.chambres.all():
+            if chambre.is_disponible(date_debut, date_fin):
+                return True
+        return False
 
     class Meta:
         verbose_name = "Hébergement"
@@ -117,7 +146,26 @@ class Chambre(models.Model):
 
     def __str__(self):
         return f"{self.numero} - {self.accommodation.titre}"
-
+    
+    def is_disponible(self, date_debut, date_fin):
+        """Vérifie si la chambre est disponible pour une période donnée"""
+        # Vérifier qu'il n'y a pas de réservation active qui chevauche
+        reservations_conflictuelles = self.reservations.filter(
+            statut__in=['en_attente', 'confirmee']
+        ).filter(
+            Q(date_debut__lte=date_fin) & Q(date_fin__gte=date_debut)
+        )
+        return not reservations_conflictuelles.exists()
+    
+    def get_dates_occupees(self):
+        """Retourne toutes les dates occupées pour cette chambre"""
+        dates_occupees = set()
+        for reservation in self.reservations.filter(statut__in=['en_attente', 'confirmee']):
+            current_date = reservation.date_debut
+            while current_date <= reservation.date_fin:
+                dates_occupees.add(current_date)
+                current_date += timedelta(days=1)
+        return sorted(dates_occupees)
 
     class Meta:
         verbose_name = "Chambre"
@@ -139,5 +187,86 @@ class Photo(models.Model):
     class Meta:
         verbose_name = "Photo"
         verbose_name_plural = "Photos"
+class Reservation(models.Model):
+    STATUT_CHOICES = [
+        ('en_attente', 'En attente'),
+        ('confirmee', 'Confirmée'),
+        ('annulee', 'Annulée'),
+        ('terminee', 'Terminée'),
+    ]
+    
+    chambre = models.ForeignKey(
+        Chambre,
+        on_delete=models.CASCADE,
+        related_name='reservations'
+    )
+    utilisateur = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reservations'
+    )
+    date_debut = models.DateField(help_text='Date de début de la réservation')
+    date_fin = models.DateField(help_text='Date de fin de la réservation')
+    nombre_personnes = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)],
+        help_text='Nombre de personnes pour cette réservation'
+    )
+    prix_total = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+        help_text='Prix total de la réservation'
+    )
+    statut = models.CharField(
+        max_length=20,
+        choices=STATUT_CHOICES,
+        default='en_attente'
+    )
+    date_reservation = models.DateTimeField(auto_now_add=True)
+    date_modification = models.DateTimeField(auto_now=True)
+    notes = models.TextField(
+        blank=True,
+        null=True,
+        help_text='Notes additionnelles pour la réservation'
+    )
+    
+    def __str__(self):
+        return f"Réservation {self.chambre.accommodation.titre} - {self.date_debut} au {self.date_fin}"
+    
+    def is_active(self):
+        """Vérifie si la réservation est active (confirmée et non terminée)"""
+        return self.statut == 'confirmee' and date.today() <= self.date_fin
+    
+    class Meta:
+        verbose_name = "Réservation"
+        verbose_name_plural = "Réservations"
+        ordering = ['-date_reservation']
 
+
+class Note(models.Model):
+    utilisateur = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="notes"
+    )
+    accommodation = models.ForeignKey(
+        Accommodation,
+        on_delete=models.CASCADE,
+        related_name="notes"
+    )
+    note = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Donnez une note de 1 à 5"
+    )
+    commentaire = models.TextField(max_length=500, blank=True, null=True)
+    date_ajoutee = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Note {self.note} pour {self.accommodation.titre} par {self.utilisateur.username}"
+
+    class Meta:
+        verbose_name = "Note"
+        verbose_name_plural = "Notes"
+        unique_together = [['utilisateur', 'accommodation']]
+        ordering = ['-date_ajoutee']
 
