@@ -43,6 +43,8 @@ class Article(models.Model):
     statut = models.CharField(max_length=50, default="en_attente")
     liked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_articles', blank=True)
     disliked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='disliked_articles', blank=True)
+    # Stocke une liste ordonnée de recommandations pré-calculées: [{'id': <pk>, 'score': 0.87}, ...]
+    recommendations = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         user_str = self.user.username if self.user_id else "Utilisateur non assigné"

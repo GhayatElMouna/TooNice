@@ -73,6 +73,16 @@ body {
         <p class="blog-subtitle">{{ page_subtitle|default:'Discover the latest articles and insights ✨' }}</p>
     </div>
 
+    <!-- Search bar -->
+    <div class="mb-4 d-flex justify-content-center">
+        <div style="position:relative; width:560px;">
+            <input id="search-input" class="form-control" type="search" placeholder="Search articles by title, description or author..." autocomplete="off">
+            <ul id="search-results" class="list-group" style="position:absolute; top:100%; left:0; right:0; z-index:50; display:none;
+                max-height:320px; overflow:auto;
+            "></ul>
+        </div>
+    </div>
+
     <div class="row">
         {% for art in articles %}
         <div class="col-md-4 mb-4">
@@ -149,4 +159,50 @@ body {
         {% endfor %}
     </div>
 </div>
+<script>
+(() => {
+    const input = document.getElementById('search-input');
+    const resultsBox = document.getElementById('search-results');
+    const apiUrl = "{% url 'article_search' %}";
+    let timer = null;
+
+    function renderResults(items){
+        resultsBox.innerHTML = '';
+        if(!items || items.length === 0){ resultsBox.style.display = 'none'; return; }
+        items.forEach(it =>{
+            const li = document.createElement('li');
+            li.className = 'list-group-item list-group-item-action';
+            li.style.cursor = 'pointer';
+            li.innerHTML = `<strong>${escapeHtml(it.title)}</strong><br><small class='text-muted'>${escapeHtml(it.snippet)}</small>`;
+            li.addEventListener('click', ()=>{ window.location.href = it.url; });
+            resultsBox.appendChild(li);
+        });
+        resultsBox.style.display = 'block';
+    }
+
+    function escapeHtml(s){
+        if(!s) return '';
+        return s.replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]; });
+    }
+
+    input.addEventListener('input', (e)=>{
+        const q = e.target.value.trim();
+        if(timer) clearTimeout(timer);
+        if(!q){ renderResults([]); return; }
+        timer = setTimeout(()=>{
+            fetch(apiUrl + '?q=' + encodeURIComponent(q))
+                .then(r => r.json())
+                .then(data => renderResults(data.results || []))
+                .catch(()=> renderResults([]));
+        }, 250);
+    });
+
+    // close when clicking outside
+    document.addEventListener('click', (e)=>{
+        if(!input.contains(e.target) && !resultsBox.contains(e.target)){
+            resultsBox.style.display = 'none';
+        }
+    });
+})();
+</script>
 {% endblock %}

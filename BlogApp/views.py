@@ -12,6 +12,8 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import redirect
 from django.http import JsonResponse
+from django.db.models import Q
+from django.urls import reverse
 from .ai_filtrer.toxicity_detector import contains_inappropriate  # ⚡ Corrige le nom exact du dossier
 
 
@@ -90,6 +92,27 @@ def home_view(request):
 def listArticles(request):
     articles = Article.objects.all()
     return render(request, 'BlogApp/list.html', {'articles': articles})
+
+
+def search_articles(request):
+    """API endpoint for searching articles by title, description or author.
+    Returns JSON with a small list of matches (id, title, snippet, url).
+    """
+    q = request.GET.get('q', '').strip()
+    results = []
+    if q:
+        qs = Article.objects.filter(
+            Q(titre__icontains=q) | Q(description__icontains=q) | Q(user__username__icontains=q)
+        ).distinct()[:10]
+        for a in qs:
+            results.append({
+                'id': a.pk,
+                'title': a.titre,
+                'snippet': (a.description[:120] + '...') if a.description and len(a.description) > 120 else (a.description or ''),
+                'url': reverse('article_details_view', args=[a.pk])
+            })
+
+    return JsonResponse({'results': results})
 
 # Class-based views
 class ArticleListView(ListView):
