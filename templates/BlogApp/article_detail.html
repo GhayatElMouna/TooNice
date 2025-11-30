@@ -51,34 +51,40 @@
     </div>
 </div>
 <!-- Recommendations -->
-{% if article.recommendations %}
+{% if recommended_articles %}
 <div class="container mt-4">
-    <h4 class="mb-3">You may also like</h4>
+    <h4 class="mb-3">You may also like
+        {% if recommendations_source %}
+            <small class="text-muted fs-6">&nbsp;—&nbsp;
+                {% if recommendations_source == 'stored' %}
+                    From stored recommendations
+                {% elif recommendations_source == 'computed' %}
+                    Calculated on-the-fly (TF-IDF)
+                {% elif recommendations_source == 'fallback' %}
+                    Fallback search used
+                {% else %}
+                    Source: {{ recommendations_source }}
+                {% endif %}
+            </small>
+        {% endif %}
+    </h4>
     <div class="row">
-        {% for rec in article.recommendations %}
-            {% with rid=rec.id %}
-                {% with other=rid|default_if_none:'' %}
-                    {% comment %} Fetch article object for each recommended id {% endcomment %}
-                    {% with other_article=Article.objects.filter(pk=rid).first %}
-                        {% if other_article %}
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100">
-                                {% if other_article.type_media == "photo" and other_article.chemin_media %}
-                                    <img src="{{ other_article.chemin_media.url }}" class="card-img-top" style="height:120px; object-fit:cover;" alt="{{ other_article.titre }}">
-                                {% else %}
-                                    <img src="{% static 'images/default.jpg' %}" class="card-img-top" style="height:120px; object-fit:cover;" alt="{{ other_article.titre }}">
-                                {% endif %}
-                                <div class="card-body p-2">
-                                    <a href="{% url 'article_details_view' other_article.pk %}" class="stretched-link text-decoration-none">
-                                        <h6 class="mb-0 text-truncate">{{ other_article.titre }}</h6>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                    {% endwith %}
-                {% endwith %}
-            {% endfor %}
+        {% for other_article in recommended_articles %}
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    {% if other_article.type_media == "photo" and other_article.chemin_media %}
+                        <img src="{{ other_article.chemin_media.url }}" class="card-img-top" style="height:120px; object-fit:cover;" alt="{{ other_article.titre }}">
+                    {% else %}
+                        <img src="{% static 'images/default.jpg' %}" class="card-img-top" style="height:120px; object-fit:cover;" alt="{{ other_article.titre }}">
+                    {% endif %}
+                    <div class="card-body p-2">
+                        <a href="{% url 'article_details_view' other_article.pk %}" class="stretched-link text-decoration-none">
+                            <h6 class="mb-0 text-truncate">{{ other_article.titre }}</h6>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 </div>
 {% endif %}

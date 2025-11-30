@@ -155,6 +155,68 @@ class ArticleDetailView(DetailView):
 
         return super().get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        article = self.get_object()
+
+        # Build recommended article objects preserving stored order
+        recs = []
+        try:
+            stored = article.recommendations or []
+            ids = [r.get('id') for r in stored if r.get('id')]
+            if ids:
+                qs = Article.objects.filter(pk__in=ids)
+                qs_map = {a.pk: a for a in qs}
+                for i in ids:
+                    a = qs_map.get(i)
+                    if a:
+                        recs.append(a)
+            # Indicate source as stored when available
+            recommendations_source = 'stored'
+        except Exception:
+            recs = []
+            recommendations_source = None
+
+        # If there are no stored recommendations, compute lightweight recommendations
+        # on-the-fly so the site shows suggestions immediately for testing.
+        if not recs:
+            try:
+                # Try to use scikit-learn TF-IDF for a quick similarity computation
+                from sklearn.feature_extraction.text import TfidfVectorizer
+                from sklearn.metrics.pairwise import linear_kernel
+
+                # Limit candidate pool to recent N articles to avoid heavy work
+                CANDIDATE_LIMIT = 500
+                candidates = list(Article.objects.exclude(pk=article.pk).order_by('-date_publication')[:CANDIDATE_LIMIT])
+                if candidates:
+                    corpus = [ (article.titre or '') + ' ' + (article.description or '') ] + [ (c.titre or '') + ' ' + (c.description or '') for c in candidates ]
+                    vect = TfidfVectorizer(stop_words=None, ngram_range=(1,2), max_df=0.85, min_df=1)
+                    X = vect.fit_transform(corpus)
+                    # similarity of first vector (article) against others
+                    sim = linear_kernel(X[0:1], X[1:]).flatten()
+                    indexed = list(enumerate(sim))
+                    indexed.sort(key=lambda x: x[1], reverse=True)
+                    top_k = 5
+                    recs = []
+                    for idx, score in indexed[:top_k]:
+                        if score <= 0:
+                            continue
+                        recs.append(candidates[idx])
+                    recommendations_source = 'computed'
+            except Exception:
+                # Fallback: simple icontains search on title/description/author
+                terms = (article.titre or '')[:200].split()
+                q = Q()
+                for t in terms[:5]:
+                    q |= Q(titre__icontains=t) | Q(description__icontains=t) | Q(user__username__icontains=t)
+                qs_fb = Article.objects.filter(q).exclude(pk=article.pk).distinct()[:5]
+                recs = list(qs_fb)
+                recommendations_source = 'fallback'
+
+        ctx['recommended_articles'] = recs
+        ctx['recommendations_source'] = recommendations_source if 'recommendations_source' in locals() else None
+        return ctx
+
   # IA ⚡
 
 
