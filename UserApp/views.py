@@ -12,6 +12,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView
 from django.views.generic.edit import UpdateView
 from .models import User
+from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 
 
 
@@ -80,22 +82,30 @@ class SignInView(FormView):
     def form_valid(self, form):
         user = form.cleaned_data['user']
         login(self.request, user)
-        # ALERTE SI LE COMPTE EST CRITICAL
-        if getattr(user, 'ai_risk_level', 'low') == 'critical':
-            messages.error(self.request,
+
+        # 🔥 SI SUPERUSER OU ADMIN -> REDIRECTION VERS /admin
+        if user.is_superuser or user.is_staff:
+            messages.success(self.request, f"Welcome admin, {user.nom}!")
+            return redirect('/admin/')
+        
+        # 🔥 ALERTE SI RISQUE CRITIQUE
+        if getattr(user, 'ai_risk_level', 'low') in ['critical', 'high','medium']:
+
+            messages.error(
+                self.request,
                 "ALERTE SÉCURITÉ CRITIQUE\n\n"
                 "Votre compte est en danger EXTRÊME de piratage !\n"
                 "L’IA a détecté plusieurs signaux très graves :\n"
                 "• Inactivité prolongée\n"
                 "• Mot de passe faible ou ancien\n"
                 "• Email à risque ou profil incomplet\n\n"
-                "CHANGEZ VOTRE MOT DE PASSE TOUT DE SUITE pour éviter le pire !",
+                "CHANGEZ VOTRE MOT DE PASSE TOUT DE SUITE !",
                 extra_tags='critical_security_alert'
             )
 
-       
         messages.success(self.request, f"Welcome back, {user.nom}!")
         return super().form_valid(form)
+
     
 
 class AboutView(TemplateView):
