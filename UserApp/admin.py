@@ -12,13 +12,20 @@ from django.db.models.functions import TruncDate
 from django.http import HttpResponseRedirect
 import json
 from calendar import monthrange
-
-
-
-
-
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.lib.enums import TA_CENTER
+import os
+from django.conf import settings
+from datetime import datetime
+from .ai_security import run_ai_security    
 from datetime import date
-
+from .ai_security import retrain_model
+from django.contrib import messages
+from django.utils import timezone
 class AgeFilter(admin.SimpleListFilter):
     title = 'Âge'
     parameter_name = 'age'
@@ -69,51 +76,280 @@ class AgeFilter(admin.SimpleListFilter):
 
 
 
-def export_users_csv(modeladmin, request, queryset):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="users.csv"'
 
-    writer = csv.writer(response)
-    writer.writerow(['ID', 'Nom', 'Prénom', 'Email', 'Pays', 'Adresse', 'Date Naissance', 'Date Inscription'])
-
-    for user in queryset:
-        writer.writerow([
-            user.id_user,
-            user.nom,
-            user.prenom,
-            user.email,
-            user.pays,
-            user.adresse,
-            user.date_naissance,
-            user.date_joined,
-        ])
-
-    return response
-
-export_users_csv.short_description = "Exporter les utilisateurs en CSV"
 
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'nom', 'prenom', 'is_staff', 'is_superuser', 'date_joined',)
+    list_display = (
+        'email', 'nom', 'prenom', 'is_staff', 'is_superuser', 
+        'risk_badge', 'score_display', 'last_login_display', 'date_joined'
+    )
     search_fields = ('email', 'nom', 'prenom')
-    list_filter = ('pays', 'is_staff', 'is_superuser', 'date_joined', AgeFilter,)
-    actions = [export_users_csv]
+    list_filter = ('ai_risk_level', 'pays', 'is_staff', 'is_superuser', 'date_joined', AgeFilter)
+    ordering = ('-ai_security_score',)
+    actions = ['lancer_ia_securite', 'reentrainer_modele', 'export_users_pdf']
     
-
-
     fieldsets = (
-        ('Informations', {
+        ('🔐 Authentification', {
             'fields': ('email', 'password')
         }),
-        ('Détails personnels', {
+        ('👤 Informations personnelles', {
             'fields': ('nom', 'prenom', 'date_naissance', 'pays', 'adresse')
         }),
-        ('Permissions', {
+        ('🛡️ Sécurité IA', {
+            'fields': ('ai_security_score', 'ai_risk_level'),
+            'classes': ('collapse',)
+        }),
+        ('⚙️ Permissions', {
             'fields': ('is_active', 'is_staff', 'is_superuser'),
         }),
     )
+    
+    readonly_fields = ('ai_security_score', 'ai_risk_level')
+    
+    def save_model(self, request, obj, form, change):
+        if not obj.username:
+            obj.username = obj.email
+        super().save_model(request, obj, form, change)
+    
+    def risk_badge(self, obj):
+        """Affichage coloré du niveau de risque"""
+        colors_map = {
+            'low': '#4caf50',
+            'medium': '#ff9800',
+            'high': '#f44336',
+            'critical': '#b71c1c'
+        }
+        icons = {
+            'low': '🟢',
+            'medium': '🟡',
+            'high': '🟠',
+            'critical': '🔴'
+        }
+        color = colors_map.get(obj.ai_risk_level, 'gray')
+        icon = icons.get(obj.ai_risk_level, '⚪')
+        
+        return format_html(
+            '<span style="background:{};color:white;padding:6px 12px;'
+            'border-radius:15px;font-weight:bold;font-size:11px;">'
+            '{} {}</span>',
+            color, icon, obj.ai_risk_level.upper()
+        )
+    risk_badge.short_description = "🛡️ Niveau de risque"
+    
+    def score_display(self, obj):
+        """Affichage du score avec barre de progression"""
+        score = obj.ai_security_score
+        if score < 30:
+            color = '#4caf50'
+        elif score < 50:
+            color = '#ff9800'
+        elif score < 70:
+            color = '#f44336'
+        else:
+            color = '#b71c1c'
+        
+        return format_html(
+            '<div style="width:100px;background:#e0e0e0;border-radius:10px;overflow:hidden;">'
+            '<div style="width:{}%;background:{};color:white;'
+            'padding:4px;text-align:center;font-weight:bold;font-size:11px;">'
+            '{}</div></div>',
+            score, color, score
+        )
+    score_display.short_description = "📊 Score IA"
+    
+    def last_login_display(self, obj):
+        """Affichage de la dernière connexion avec couleur"""
+        if not obj.last_login:
+            return format_html('<span style="color:#f44336;">❌ Jamais</span>')
+        
+        from django.utils import timezone
+        days = (timezone.now() - obj.last_login).days
+        
+        if days == 0:
+            return format_html('<span style="color:#4caf50;">✅ Aujourd\'hui</span>')
+        elif days < 7:
+            return format_html('<span style="color:#4caf50;">✅ Il y a {}j</span>', days)
+        elif days < 30:
+            return format_html('<span style="color:#ff9800;">⚠️ Il y a {}j</span>', days)
+        else:
+            return format_html('<span style="color:#f44336;">❌ Il y a {}j</span>', days)
+    
+    last_login_display.short_description = "🕒 Dernière connexion"
+    
+    # ACTIONS IA
+    def lancer_ia_securite(self, request, queryset):
+        """Lance l'analyse IA avec Machine Learning"""
+        try:
+            results = run_ai_security()
+            message = (
+                f"✅ Analyse IA (Machine Learning) terminée! "
+                f"📊 {results['total']} utilisateurs analysés - "
+                f"🔴 Critical: {results['critical']} | "
+                f"🟠 High: {results['high']} | "
+                f"🟡 Medium: {results['medium']} | "
+                f"🟢 Low: {results['low']} - "
+                f"📈 Score moyen: {results['avg_score']:.1f}/100"
+            )
+            self.message_user(request, message, level=messages.SUCCESS)
+        except Exception as e:
+            self.message_user(
+                request, 
+                f"❌ Erreur lors de l'analyse IA: {str(e)}", 
+                level=messages.ERROR
+            )
+    lancer_ia_securite.short_description = " LANCER L'IA DE SÉCURITÉ"
+    
+
+    def export_users_pdf(modeladmin, request, queryset):
+        # Créer la réponse HTTP
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="utilisateurs_{}.pdf"'.format(
+            datetime.now().strftime('%Y%m%d_%H%M%S')
+        )
+
+        # Créer le document PDF en paysage pour plus d'espace
+        doc = SimpleDocTemplate(response, pagesize=landscape(A4),
+                            rightMargin=1*cm, leftMargin=1*cm,
+                            topMargin=2*cm, bottomMargin=2*cm)
+        
+        # Container pour les éléments du PDF
+        elements = []
+        
+        # Styles
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=24,
+            textColor=colors.HexColor('#2C3E50'),
+            spaceAfter=30,
+            alignment=TA_CENTER,
+            fontName='Helvetica-Bold'
+        )
+        
+        # Ajouter le logo (ajustez le chemin vers votre logo)
+        logo_path = os.path.join(settings.MEDIA_ROOT, 'static/public/toonice-logo.png')  
+        # Ou utilisez : logo_path = os.path.join(settings.STATIC_ROOT, 'images/logo.png')
+        
+        if os.path.exists(logo_path):
+            logo = Image(logo_path, width=4*cm, height=4*cm)
+            logo.hAlign = 'CENTER'
+            elements.append(logo)
+            elements.append(Spacer(1, 0.5*cm))
+        
+        # Titre
+        title = Paragraph("Liste des Utilisateurs", title_style)
+        elements.append(title)
+        
+        # Sous-titre avec date
+        subtitle_style = ParagraphStyle(
+            'Subtitle',
+            parent=styles['Normal'],
+            fontSize=12,
+            textColor=colors.HexColor('#7F8C8D'),
+            alignment=TA_CENTER,
+            spaceAfter=20
+        )
+        subtitle = Paragraph(
+            f"Généré le {datetime.now().strftime('%d/%m/%Y à %H:%M')} - Total: {queryset.count()} utilisateurs",
+            subtitle_style
+        )
+        elements.append(subtitle)
+        elements.append(Spacer(1, 1*cm))
+        
+        # Préparer les données du tableau
+        data = [['ID', 'Nom', 'Prénom', 'Email', 'Pays', 'Adresse', 'Date Naissance', 'Date Inscription']]
+        
+        for user in queryset:
+            data.append([
+                str(user.id_user),
+                user.nom or '',
+                user.prenom or '',
+                user.email or '',
+                user.pays or '',
+                user.adresse or '',
+                user.date_naissance.strftime('%d/%m/%Y') if user.date_naissance else '',
+                user.date_joined.strftime('%d/%m/%Y') if user.date_joined else '',
+            ])
+        
+        # Créer le tableau
+        table = Table(data, repeatRows=1)
+        
+        # Style du tableau
+        table.setStyle(TableStyle([
+            # En-tête
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3498DB')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('TOPPADDING', (0, 0), (-1, 0), 12),
+            
+            # Corps du tableau
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#2C3E50')),
+            ('ALIGN', (0, 1), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('TOPPADDING', (0, 1), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+            
+            # Bordures
+            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#BDC3C7')),
+            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#2C3E50')),
+            
+            # Alternance de couleurs pour les lignes
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#ECF0F1')]),
+        ]))
+        
+        elements.append(table)
+        
+        # Footer
+        elements.append(Spacer(1, 1*cm))
+        footer_style = ParagraphStyle(
+            'Footer',
+            parent=styles['Normal'],
+            fontSize=8,
+            textColor=colors.HexColor('#95A5A6'),
+            alignment=TA_CENTER
+        )
+        footer = Paragraph("Document confidentiel - Tous droits réservés © 2025", footer_style)
+        elements.append(footer)
+        
+        # Construire le PDF
+        doc.build(elements)
+        
+        return response
+
+    export_users_pdf.short_description = "Exporter les utilisateurs en PDF"
+
+
+
+
+    def reentrainer_modele(self, request, queryset):
+        """Force le réentraînement complet des modèles d'IA"""
+        try:
+            results = retrain_model()
+            message = (
+                f"✅ Modèles d'IA réentraînés avec succès! "
+                f"🧠 Les modèles ont appris de {results['total']} utilisateurs - "
+                f"🔴 Critical: {results['critical']} | "
+                f"🟠 High: {results['high']} | "
+                f"🟡 Medium: {results['medium']} | "
+                f"🟢 Low: {results['low']}"
+            )
+            self.message_user(request, message, level=messages.SUCCESS)
+        except Exception as e:
+            self.message_user(
+                request,
+                f"❌ Erreur lors du réentraînement: {str(e)}",
+                level=messages.ERROR
+            )
+    reentrainer_modele.short_description = " RÉENTRAÎNER LES MODÈLES D'IA"
 
     change_list_template = "changelist.html"
     

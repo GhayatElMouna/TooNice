@@ -80,8 +80,23 @@ class SignInView(FormView):
     def form_valid(self, form):
         user = form.cleaned_data['user']
         login(self.request, user)
+        # ALERTE SI LE COMPTE EST CRITICAL
+        if getattr(user, 'ai_risk_level', 'low') == 'critical':
+            messages.error(self.request,
+                "ALERTE SÉCURITÉ CRITIQUE\n\n"
+                "Votre compte est en danger EXTRÊME de piratage !\n"
+                "L’IA a détecté plusieurs signaux très graves :\n"
+                "• Inactivité prolongée\n"
+                "• Mot de passe faible ou ancien\n"
+                "• Email à risque ou profil incomplet\n\n"
+                "CHANGEZ VOTRE MOT DE PASSE TOUT DE SUITE pour éviter le pire !",
+                extra_tags='critical_security_alert'
+            )
+
+       
         messages.success(self.request, f"Welcome back, {user.nom}!")
         return super().form_valid(form)
+    
 
 class AboutView(TemplateView):
     template_name = 'about.html'

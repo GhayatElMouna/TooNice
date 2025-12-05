@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
+    
     <!-- Header -->
     <header class="header">
         <div class="container">
@@ -58,6 +59,166 @@
             </nav>
         </div>
     </header>
+  {% if messages %}
+    {% for message in messages %}
+        {% if 'critical_security_alert' in message.extra_tags %}
+
+            <!-- POP-UP FULL SCREEN + FOND FLOU TOTAL -->
+            <div class="toonice-fullscreen-popup" id="criticalFullPopup">
+                <div class="popup-backdrop"></div>
+
+                <div class="popup-card">
+                    <!-- Bouton fermer -->
+                    <button class="popup-close-btn" onclick="document.getElementById('criticalFullPopup').remove()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </button>
+
+                    <!-- Contenu -->
+                    <div class="popup-body">
+                        <img src="{% static 'public/toonice-logo.png' %}" alt="TooNice" class="popup-logo">
+
+                        <h2 class="popup-title">
+                            <span class="gradient-text">Alerte de sécurité critique détectée</span>
+                        </h2>
+
+                        <div class="popup-message">
+                            {{ message|linebreaksbr }}
+                        </div>
+
+                        <div class="popup-badge">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="url(#grad-badge)">
+                                <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm-1 14.5v.5h2v-.5h-2zm0-7h2v6h-2v-6z"/>
+                                <defs>
+                                    <linearGradient id="grad-badge">
+                                        <stop offset="0%" stop-color="#1e40af"/>
+                                        <stop offset="100%" stop-color="#f97316"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            TooNice AI Security
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                /* Fond flou complet + overlay sombre léger */
+                .toonice-fullscreen-popup {
+                    position: fixed;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    z-index: 99999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                    animation: fadeIn 0.4s ease-out;
+                }
+                .popup-backdrop {
+                    position: absolute;
+                    inset: 0;
+                    background: rgba(15, 23, 42, 0.72);
+                    backdrop-filter: blur(14px);
+                    -webkit-backdrop-filter: blur(14px);
+                }
+
+                /* Carte popup centrée */
+                .popup-card {
+                    position: relative;
+                    background: white;
+                    border-radius: 24px;
+                    max-width: 580px;
+                    width: 100%;
+                    box-shadow: 0 32px 80px rgba(30, 64, 175, 0.28);
+                    overflow: hidden;
+                    animation: zoomIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+
+                .popup-close-btn {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(255,255,255,0.8);
+                    border: none;
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #64748b;
+                    backdrop-filter: blur(10px);
+                    transition: all 0.2s;
+                    z-index: 10;
+                }
+                .popup-close-btn:hover {
+                    background: white;
+                    color: #1e293b;
+                    transform: scale(1.1);
+                }
+
+                .popup-body {
+                    padding: 60px 48px;
+                    text-align: center;
+                }
+                .popup-logo {
+                    height: 68px;
+                    margin-bottom: 24px;
+                }
+                .popup-title {
+                    margin: 0 0 20px 0;
+                    font-size: 28px;
+                    font-weight: 800;
+                    line-height: 1.2;
+                }
+                .gradient-text {
+                    background: linear-gradient(90deg, #1e40af 0%, #ea580c 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                .popup-message {
+                    font-size: 16.5px;
+                    line-height: 1.75;
+                    color: #475569;
+                    font-weight: 500;
+                    margin: 0 0 32px 0;
+                }
+                .popup-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 12px;
+                    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+                    color: #1e293b;
+                    font-size: 15px;
+                    font-weight: 600;
+                    padding: 12px 24px;
+                    border-radius: 60px;
+                    border: 1.5px solid #e2e8f0;
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+                }
+
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes zoomIn {
+                    from { opacity: 0; transform: scale(0.9); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+
+                @media (max-width: 640px) {
+                    .popup-body { padding: 48px 32px; }
+                    .popup-title { font-size: 24px; }
+                    .popup-message { font-size: 16px; }
+                }
+            </style>
+
+        {% endif %}
+    {% endfor %}
+{% endif %}
 
     <!-- Hero Section with Carousel -->
     <section class="hero">
