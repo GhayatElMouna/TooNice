@@ -9,10 +9,11 @@
 {% block content %}
 <section class="events-section">
     <div class="container">
-        <h1 class="section-title">Upcoming Events</h1>
+        
 
-        <!-- FILTER BAR -->
-        <form method="get" class="filter-bar">
+        <div class="events-layout">
+            <!-- FILTER BAR -->
+            <form method="get" class="filter-bar">
 
             <!-- Start Date -->
             <div>
@@ -71,6 +72,16 @@
                 </select>
             </div>
 
+            <!-- Status -->
+            <div>
+                <label for="status">Status</label>
+                <select name="status" id="status" class="filter-select">
+                    <option value="">All Events</option>
+                    <option value="upcoming" {% if status == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                    <option value="finished" {% if status == 'finished' %}selected{% endif %}>Finished</option>
+                </select>
+            </div>
+
             <div>
                 <button type="submit" class="filter-btn apply">Apply</button>
                 <a href="{% url 'event_list' %}" class="filter-btn reset">Clear</a>
@@ -78,8 +89,8 @@
         </form>
         <!-- END FILTER BAR -->
 
-        <!-- EVENTS GRID -->
-        <div class="events-grid">
+            <!-- EVENTS GRID -->
+            <div class="events-grid">
             {% for event in events %}
             <div class="event-card">
                 {% if event.image %}
@@ -94,21 +105,27 @@
 
                     <a href="{% url 'event_detail' event.id_event %}" class="btn-show-more">Show More</a>
 
-                    {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'participation:register_event' event.id_event %}" style="display:inline; margin-left:8px;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Register</button>
-                    </form>
+                    {% now "Y-m-d" as today %}
+                    {% if event.date_fin|date:"Y-m-d" >= today %}
+                        {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'participation:register_event' event.id_event %}" style="display:inline; margin-left:8px;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </form>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline">Sign in to register</a>
+                        {% endif %}
                     {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline">Sign in to register</a>
+                        <span class="text-muted" style="margin-left:8px; font-size:0.9em;">Event finished</span>
                     {% endif %}
                 </div>
             </div>
             {% empty %}
             <p>No upcoming events found.</p>
             {% endfor %}
+            </div>
+            <!-- END EVENTS GRID -->
         </div>
-        <!-- END EVENTS GRID -->
     </div>
 </section>
 {% endblock %}

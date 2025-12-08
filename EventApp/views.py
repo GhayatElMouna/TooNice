@@ -15,9 +15,12 @@ def event_list(request):
     end_date = request.GET.get('end_date')
     category = request.GET.get('category')
     state = request.GET.get('state')
+    status = request.GET.get('status')  # 'upcoming' or 'finished'
 
+    # Filter events that overlap with the trip period
+    # An event overlaps if: event_start <= trip_end AND event_end >= trip_start
     if start_date and end_date:
-        events = events.filter(date_debut__range=[start_date, end_date])
+        events = events.filter(date_debut__lte=end_date, date_fin__gte=start_date)
 
     if category:
         events = events.filter(category=category)
@@ -25,12 +28,21 @@ def event_list(request):
     if state:
         events = events.filter(place__icontains=state)  # assuming 'place' stores the city/governorate
 
+    # Filter by status (upcoming or finished)
+    from datetime import date
+    today = date.today()
+    if status == 'upcoming':
+        events = events.filter(date_fin__gte=today)
+    elif status == 'finished':
+        events = events.filter(date_fin__lt=today)
+
     context = {
         'events': events,
         'start_date': start_date,
         'end_date': end_date,
         'category': category,
         'state': state,
+        'status': status,
     }
     return render(request, 'EventsApp/events.html', context)
 

@@ -9,30 +9,30 @@ from django.utils.timezone import localdate
 
 @login_required
 def register_event(request, event_id):
-	# Only accept POST for registration
-	if request.method != 'POST':
-		return redirect('event_list')
+    # Only accept POST for registration
+    if request.method != 'POST':
+        return redirect('event_list')
 
-	event = get_object_or_404(Event, id_event=event_id)
+    event = get_object_or_404(Event, id_event=event_id)
 
-	# Check if capacity is available
-	if event.capacite <= 0:
-		messages.error(request, 'This event is fully booked.')
-		return redirect('event_list')
+    # Check if capacity is available
+    if event.capacite <= 0:
+        messages.error(request, 'This event is fully booked.')
+        return redirect('participation:my_events')
 
-	# Prevent duplicate registrations
-	already = Participation.objects.filter(user=request.user, event=event).exists()
-	if already:
-		messages.info(request, 'You have already registered for this event.')
-		return redirect('event_list')
+    # Prevent duplicate registrations
+    already = Participation.objects.filter(user=request.user, event=event).exists()
+    if already:
+        messages.info(request, 'You have already registered for this event.')
+        return redirect('participation:my_events')
 
-	# Create participation and decrement capacity atomically
-	# Simple approach: update and save (for heavy concurrency use DB transactions)
-	Participation.objects.create(user=request.user, event=event)
-	event.capacite = max(0, event.capacite - 1)
-	event.save()
-	messages.success(request, 'Successfully registered for the event.')
-	return redirect('event_list')
+    # Create participation and decrement capacity atomically
+    # Simple approach: update and save (for heavy concurrency use DB transactions)
+    Participation.objects.create(user=request.user, event=event)
+    event.capacite = max(0, event.capacite - 1)
+    event.save()
+    messages.success(request, 'Successfully registered for the event.')
+    return redirect('participation:my_events')
 
 
 """@login_required
@@ -46,8 +46,10 @@ def my_events(request):
 
 @login_required
 def my_events(request):
+    # Show only unconfirmed ("cart") participations
     participations = Participation.objects.filter(
-        user=request.user
+        user=request.user,
+        confirmed=False
     ).select_related('event')
 
     return render(request, 'ParticipationApp/my_events.html', {'participations': participations})
@@ -133,10 +135,11 @@ def confirm_reservation(request, participation_id):
     participation.save()
 
     messages.success(request, "Your reservation has been confirmed.")
-    return redirect('participation:my_events')
+    return redirect('participation:post_events')
 
 
 
+@login_required
 def post_events(request):
     participations = Participation.objects.filter(
         user=request.user,

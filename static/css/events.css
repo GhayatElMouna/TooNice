@@ -10,7 +10,15 @@
     color: #2c3e50;
 }
 
+/* Layout container for sidebar + grid */
+.events-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
 .events-grid {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
@@ -88,17 +96,22 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .events-layout {
+        flex-direction: column;
+    }
+    
+    .filter-bar {
+        max-width: 100%;
+        width: 100%;
+    }
+    
     .events-grid {
         grid-template-columns: 1fr;
     }
+    
     /* slightly smaller square on small screens */
     .event-image {
         max-height: 140px;
-    }
-    .filter-bar {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 20px;
     }
 
     .filter-select,
@@ -107,18 +120,24 @@
         width: 100%;
     }
 }
-/* FILTER BAR STYLING */
+/* FILTER BAR STYLING - LEFT SIDEBAR */
 .filter-bar {
     display: flex;
-    gap: 15px;
-    padding: 15px 20px;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
     background: #ffffff;
     border: 1px solid #ddd;
     border-radius: 15px;
-    margin-bottom: 30px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-    align-items: center;
-    flex-wrap: wrap;
+    min-width: 220px;
+    max-width: 280px;
+}
+
+.filter-bar > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .filter-bar label {

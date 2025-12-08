@@ -8,7 +8,7 @@
 {% block content %}
 <section class="my-events-section">
   <div class="container">
-    <h1>My Events</h1>
+    <h1>Event reservations</h1>
 
     {% if participations %}
       <div class="events-grid">
@@ -55,10 +55,10 @@
                 </button>
               </form>
 
-              <!-- Confirm Button -->
+              <!-- Register (confirm) Button -->
               <a href="{% url 'participation:confirm_reservation' p.id_participation %}"
                  class="btn btn-success btn-sm ms-2">
-                Confirm Reservation
+                Register
               </a>
 
             </div>
