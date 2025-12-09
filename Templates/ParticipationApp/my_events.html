@@ -58,7 +58,7 @@
               <!-- Register (confirm) Button -->
               <a href="{% url 'participation:confirm_reservation' p.id_participation %}"
                  class="btn btn-success btn-sm ms-2"
-                 onclick="downloadTicketAndRedirect(arguments[0], '{% url 'participation:post_events' %}'); return false;">
+                 onclick="confirmReservation(event, '{% url 'participation:post_events' %}')">
                 Confirm Reservation
               </a>
 
@@ -79,19 +79,34 @@
 </section>
 
 <script>
-function downloadTicketAndRedirect(e, redirectUrl) {
+function confirmReservation(e, redirectUrl) {
   e.preventDefault();
-  const href = e.target.href;
+  const url = e.target.href;
   
-  // Trigger PDF download
-  const link = document.createElement('a');
-  link.href = href;
-  link.click();
-  
-  // Redirect after a short delay
-  setTimeout(() => {
-    window.location.href = redirectUrl;
-  }, 500);
+  // Fetch the PDF
+  fetch(url)
+    .then(response => response.blob())
+    .then(blob => {
+      // Create blob URL and download
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'ticket.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+      
+      // Redirect after download starts
+      setTimeout(() => {
+        window.location.href = redirectUrl;
+      }, 1000);
+    })
+    .catch(error => {
+      console.error('Download failed:', error);
+      alert('Download failed. Redirecting...');
+      window.location.href = redirectUrl;
+    });
 }
 </script>
 {% endblock %}

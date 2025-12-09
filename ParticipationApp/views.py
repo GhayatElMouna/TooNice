@@ -12,7 +12,6 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from io import BytesIO
-import qrcode
 
 
 @login_required
@@ -303,16 +302,17 @@ def confirm_reservation(request, participation_id):
     participation.confirmed = True
     participation.save()
 
-    # Generate and return the PDF ticket
+    # Generate PDF ticket
     pdf_buffer = generate_ticket_pdf(participation)
+    pdf_buffer.seek(0)
     
-    response = HttpResponse(pdf_buffer, content_type='application/pdf')
+    # Create response with proper headers
+    response = HttpResponse(pdf_buffer.read(), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="ticket_{participation.event.title.replace(" ", "_")}_{participation.id_participation}.pdf"'
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
     
-    messages.success(request, "Your reservation has been confirmed and your ticket has been downloaded.")
-    
-    # After PDF is returned, we'll use JavaScript redirect or just return the PDF
-    # Since we can't redirect after sending file, we'll store session and show message
     return response
 
 
