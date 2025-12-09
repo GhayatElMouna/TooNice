@@ -40,6 +40,7 @@
                         <a href="{% url 'event_list' %}" class="dropdown-item">Events</a>
                         <a href="{% url 'participation:my_events' %}" class="dropdown-item">Reservations</a>
                         <a href="{% url 'participation:post_events' %}" class="dropdown-item">Registered Events</a>
+                        <!-- template dashboard links for admin 
                         {% if request.user.is_staff %}
                            <li>
                                   <a href="{% url 'event_stats' %}" class="dropdown-item">Event Statistics</a>
@@ -47,6 +48,7 @@
 
                            </li>
                         {% endif %}
+                        -->
 
                     </div>
             </div>

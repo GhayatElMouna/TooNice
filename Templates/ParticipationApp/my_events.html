@@ -57,8 +57,9 @@
 
               <!-- Register (confirm) Button -->
               <a href="{% url 'participation:confirm_reservation' p.id_participation %}"
-                 class="btn btn-success btn-sm ms-2">
-                Register
+                 class="btn btn-success btn-sm ms-2"
+                 onclick="downloadTicketAndRedirect(arguments[0], '{% url 'participation:post_events' %}'); return false;">
+                Confirm Reservation
               </a>
 
             </div>
@@ -76,4 +77,21 @@
 
   </div>
 </section>
+
+<script>
+function downloadTicketAndRedirect(e, redirectUrl) {
+  e.preventDefault();
+  const href = e.target.href;
+  
+  // Trigger PDF download
+  const link = document.createElement('a');
+  link.href = href;
+  link.click();
+  
+  // Redirect after a short delay
+  setTimeout(() => {
+    window.location.href = redirectUrl;
+  }, 500);
+}
+</script>
 {% endblock %}

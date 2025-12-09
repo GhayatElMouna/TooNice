@@ -36,16 +36,20 @@ function resetAutoPlay() {
 }
 
 // Event listeners for carousel buttons
-document.getElementById("nextBtn").addEventListener("click", nextSlide)
-document.getElementById("prevBtn").addEventListener("click", prevSlide)
+const nextBtn = document.getElementById("nextBtn")
+const prevBtn = document.getElementById("prevBtn")
+if (nextBtn) nextBtn.addEventListener("click", nextSlide)
+if (prevBtn) prevBtn.addEventListener("click", prevSlide)
 
 // Mobile menu toggle
 const menuToggle = document.querySelector(".menu-toggle")
 const mobileNav = document.getElementById("mobileNav")
 
-menuToggle.addEventListener("click", () => {
-  mobileNav.classList.toggle("active")
-})
+if (menuToggle && mobileNav) {
+  menuToggle.addEventListener("click", () => {
+    mobileNav.classList.toggle("active")
+  })
+}
 
 // Close mobile menu when clicking a link
 const mobileLinks = document.querySelectorAll(".nav-link-mobile")

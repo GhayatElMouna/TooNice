@@ -1,0 +1,67 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block result_list %}
+<!-- Original change list content -->
+{{ block.super }}
+
+<!-- Event Ratings Distribution Chart -->
+<div class="module" style="margin-top: 20px;">
+    <h2>Event Ratings Distribution</h2>
+    <div style="width: 500px; height: 500px; margin: 20px auto;">
+        <canvas id="scoreChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById("scoreChart");
+    if (!ctx) return;
+    
+    const chartLabels = JSON.parse('{{ chart_labels|safe }}');
+    const chartData = JSON.parse('{{ chart_scores|safe }}');
+
+    if (chartLabels.length === 0 || chartData.length === 0) {
+        ctx.parentElement.innerHTML = '<p style="text-align: center; padding: 20px;">No rating data available yet.</p>';
+        return;
+    }
+
+    new Chart(ctx.getContext("2d"), {
+        type: "pie",
+        data: {
+            labels: chartLabels,
+            datasets: [{
+                data: chartData,
+                borderWidth: 1,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)',
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Event Ratings Distribution ★ (%)",
+                    font: {
+                        size: 16
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: 'right'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
